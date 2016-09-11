@@ -28,8 +28,8 @@ func NewConfKV(filepath string) (*ConfKV, error) {
 	}, nil
 }
 
-func (p *ConfKV) Read(id, key string) string {
-	return p.conf.GetKeyComments(id, key)
+func (p *ConfKV) Read(id, key string) (string, error) {
+	return p.conf.GetValue(id, key)
 }
 func (p *ConfKV) ReadRecord(id string) (map[string]string, error) {
 	return p.conf.GetSection(id)

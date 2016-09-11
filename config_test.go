@@ -2,6 +2,7 @@ package Figo
 
 import (
 	"github.com/figoxu/utee"
+	"log"
 	"testing"
 )
 
@@ -26,4 +27,10 @@ func TestNewConfKV(t *testing.T) {
 		"javascript": "3",
 	})
 	kv.Flush()
+	v, err := kv.Read("Figo", "Cool")
+	log.Println(v)
+	v2, err := kv.ReadRecord("Figo")
+	for k, v := range v2 {
+		log.Println("@k:", k, " @v:", v)
+	}
 }
