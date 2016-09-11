@@ -1,6 +1,7 @@
 package Figo
 
 import (
+	"bufio"
 	"os"
 	"path/filepath"
 	"strings"
@@ -42,6 +43,14 @@ func (p FilePath) Exist() bool {
 }
 func (p FilePath) String() string {
 	return string(p)
+}
+
+func (p FilePath) Writer() (*bufio.Writer, error) {
+	if f, err := p.Open(); err != nil {
+		return nil, err
+	} else {
+		return bufio.NewWriter(f), nil
+	}
 }
 
 func (p FilePath) Open() (*os.File, error) {
