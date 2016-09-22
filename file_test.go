@@ -1,7 +1,7 @@
 package Figo
 
 import (
-	"github.com/figoxu/utee"
+	"github.com/quexer/utee"
 	"log"
 	"testing"
 )
