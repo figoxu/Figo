@@ -8,7 +8,7 @@ import (
 )
 
 func TestMockRequest(t *testing.T) {
-	req := mockRequest("PUT", "http://localhost:8080", strings.NewReader(`foo`))
+	req := MockRequest("PUT", "http://localhost:8080", strings.NewReader(`foo`))
 	req.Header.Set("Content-Type", "text/plain; charset=utf-8")
 	req.Form = url.Values{
 		"Hello": []string{"World"},
@@ -19,6 +19,6 @@ func TestMockRequest(t *testing.T) {
 }
 
 func TestMockUteeWeb(t *testing.T) {
-	web := mockUteeWeb()
+	web := MockUteeWeb()
 	web.Json(200, []string{"Hello"})
 }
