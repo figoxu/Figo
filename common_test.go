@@ -2,7 +2,7 @@ package Figo
 
 import (
 	"fmt"
-	"github.com/gogap/errors"
+	"errors"
 	"github.com/quexer/utee"
 	"log"
 	"math/rand"
