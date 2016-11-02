@@ -6,9 +6,10 @@ import (
 )
 
 func Catch() {
-	err := recover()
-	log.Println(string(debug.Stack()))
-	log.Println(err, " (recover)")
+	if err := recover(); err != nil {
+		log.Println(string(debug.Stack()))
+		log.Println(err, " (recover)")
+	}
 }
 
 func Clone(src interface{}) interface{} {
