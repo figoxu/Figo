@@ -3,7 +3,6 @@ package Figo
 import (
 	"log"
 	"runtime/debug"
-	//	"github.com/hailocab/gocassa/reflect"
 )
 
 func Catch() {
