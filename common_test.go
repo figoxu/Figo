@@ -1,8 +1,8 @@
 package Figo
 
 import (
-	"fmt"
 	"errors"
+	"fmt"
 	"github.com/quexer/utee"
 	"log"
 	"math/rand"
