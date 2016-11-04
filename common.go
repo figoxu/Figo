@@ -1,7 +1,10 @@
 package Figo
 
 import (
+	"github.com/gogap/errors"
+	"github.com/quexer/utee"
 	"log"
+	"reflect"
 	"runtime/debug"
 )
 
@@ -13,6 +16,9 @@ func Catch() {
 }
 
 func Clone(src interface{}) interface{} {
+	if reflect.TypeOf(src).Kind().String() == "ptr" {
+		utee.Chk(errors.New("Can Not Clone An Point"))
+	}
 	dst := (src)
 	return dst
 }

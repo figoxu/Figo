@@ -89,6 +89,10 @@ func TestClone(t *testing.T) {
 	log.Println("===============")
 	obj2.display()
 
+	//	log.Println("1==>")
+	//	 Clone(&cloneObj)
+	//	log.Println("2==>")
+	Clone(cloneObj)
 }
 
 func TestExist(t *testing.T) {
