@@ -90,3 +90,8 @@ func TestClone(t *testing.T) {
 	obj2.display()
 
 }
+
+func TestExist(t *testing.T) {
+	v := Exist(1, 2, 3, 4, 1)
+	log.Println(v)
+}
