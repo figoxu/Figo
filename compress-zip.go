@@ -1,39 +1,29 @@
 package Figo
 
 import (
-	"archive/zip"
-	"io"
+	zipTool "github.com/pierrre/archivefile/zip"
+	"log"
 	"os"
 )
 
-func UnZip(zipFile, dest string) error {
-	reader, err := zip.OpenReader(zipFile)
+func Zip(dir, dst string) error {
+	outFile, err := NewFilePath(dst).Open()
 	if err != nil {
 		return err
 	}
-	defer reader.Close()
-	for _, file := range reader.File {
-		rc, err := file.Open()
-		defer rc.Close()
-		if err != nil {
-			return err
-		}
-		filename := dest + file.Name
-		folderName := NewFilePath(filename).FolderName()
-		if folderName == filename {
-			continue
-		}
-		if err = os.MkdirAll(folderName, 0755); err != nil {
-			return err
-		}
-		w, err := os.Create(filename)
-		if err != nil {
-			return err
-		}
-		defer w.Close()
-		if _, err = io.Copy(w, rc); err != nil {
-			return err
-		}
+	defer outFile.Close()
+	progress := func(archivePath string) {
+		log.Println(archivePath)
 	}
-	return nil
+	return zipTool.Archive(dir, outFile, progress)
+}
+
+func UnZip(zipFile, destDir string) error {
+	if err := os.MkdirAll(destDir, 0777); err != nil {
+		return err
+	}
+	progress := func(archivePath string) {
+		log.Println(archivePath)
+	}
+	return zipTool.UnarchiveFile(zipFile, destDir, progress)
 }
