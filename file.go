@@ -67,11 +67,19 @@ func (p FilePath) Open() (*os.File, error) {
 	return file, err
 }
 
+func NewFilePath(s string) FilePath {
+	return FilePath(s)
+}
+
+
 func FileOpen(s string) (*os.File, error) {
 	var filepath FilePath = FilePath(s)
 	return filepath.Open()
 }
 
-func NewFilePath(s string) FilePath {
-	return FilePath(s)
+func FileExist(s string) bool {
+	if _, err := os.Stat(s); os.IsNotExist(err) {
+		return false
+	}
+	return true
 }

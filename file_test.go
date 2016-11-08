@@ -4,6 +4,7 @@ import (
 	"github.com/quexer/utee"
 	"log"
 	"testing"
+	"github.com/bmizerany/assert"
 )
 
 func TestFileOpen(t *testing.T) {
@@ -18,4 +19,10 @@ func TestFileOpen(t *testing.T) {
 	log.Println(fp.UnixPath())
 	fp = FilePath(fp.UnixPath())
 	log.Println(fp.WindowsPath())
+}
+
+func TestFileExist(t *testing.T){
+	assert.Equal(t,true,FileExist("./file.go"))
+	assert.Equal(t,false,FileExist("./fileNotExist"))
+	log.Println("test pass")
 }
