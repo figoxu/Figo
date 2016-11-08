@@ -15,6 +15,14 @@ func TestCatch(t *testing.T) {
 	log.Println("Before")
 	catchSampleMethod()
 	log.Println("After")
+	log.Println("Panic In Loops Begin")
+	for i := 0; i < 100; i++ {
+		{
+			defer Catch()
+			utee.Chk(errors.New(fmt.Sprint("error", i)))
+		}
+	}
+	log.Println("Panic In Loops Finish")
 }
 
 func catchSampleMethod() {
