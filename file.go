@@ -71,7 +71,6 @@ func NewFilePath(s string) FilePath {
 	return FilePath(s)
 }
 
-
 func FileOpen(s string) (*os.File, error) {
 	var filepath FilePath = FilePath(s)
 	return filepath.Open()

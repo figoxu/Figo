@@ -1,10 +1,10 @@
 package Figo
 
 import (
+	"github.com/bmizerany/assert"
 	"github.com/quexer/utee"
 	"log"
 	"testing"
-	"github.com/bmizerany/assert"
 )
 
 func TestFileOpen(t *testing.T) {
@@ -21,8 +21,8 @@ func TestFileOpen(t *testing.T) {
 	log.Println(fp.WindowsPath())
 }
 
-func TestFileExist(t *testing.T){
-	assert.Equal(t,true,FileExist("./file.go"))
-	assert.Equal(t,false,FileExist("./fileNotExist"))
+func TestFileExist(t *testing.T) {
+	assert.Equal(t, true, FileExist("./file.go"))
+	assert.Equal(t, false, FileExist("./fileNotExist"))
 	log.Println("test pass")
 }
