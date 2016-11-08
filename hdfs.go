@@ -2,6 +2,8 @@ package Figo
 
 import (
 	"github.com/colinmarc/hdfs"
+	"io"
+	"log"
 	"os"
 )
 
@@ -50,6 +52,37 @@ func (p *HDFSClient) Write(fullPath string, data []byte) error {
 	w.Close()
 	return err
 }
+
+func (p *HDFSClient) WriteFile(fullPath string, file *os.File) error {
+	p.open()
+	defer p.close()
+	folderName := NewFilePath(fullPath).FolderName()
+	p.client.MkdirAll(folderName, 0644)
+	w, err := p.client.Create(fullPath)
+	if err != nil {
+		return err
+	}
+	n, err := io.Copy(w, file)
+	log.Println("@WriteFile ", n, " Bytes")
+	return err
+}
+
+//func (p *HDFSClient) Append(fullPath string, data []byte) error {
+//	p.open()
+//	defer p.close()
+//	log.Println("a000001")
+//	w,err:=p.client.Append(fullPath)
+//	log.Println("a000002")
+//	if err != nil {
+//		return err
+//	}
+//	log.Println("a000003")
+//	_, err = w.Write(data)
+//	log.Println("a000004")
+//	w.Close()
+//	log.Println("a000005")
+//	return err
+//}
 
 func (p *HDFSClient) Read(fullPath string) ([]byte, error) {
 	p.open()
