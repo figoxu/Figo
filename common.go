@@ -1,7 +1,7 @@
 package Figo
 
 import (
-	"github.com/gogap/errors"
+	"errors"
 	"github.com/quexer/utee"
 	"log"
 	"reflect"
