@@ -42,6 +42,7 @@ func (p *HDFSClient) close() error {
 func (p *HDFSClient) Write(fullPath string, data []byte) error {
 	p.open()
 	defer p.close()
+	fullPath = FilePathFormat(fullPath)
 	folderName := NewFilePath(fullPath).FolderName()
 	if err := p.client.MkdirAll(folderName, 0644); err != nil {
 		return err
@@ -58,6 +59,7 @@ func (p *HDFSClient) Write(fullPath string, data []byte) error {
 func (p *HDFSClient) WriteFile(fullPath string, file *os.File) error {
 	p.open()
 	defer p.close()
+	fullPath = FilePathFormat(fullPath)
 	folderName := NewFilePath(fullPath).FolderName()
 	if err := p.client.MkdirAll(folderName, 0644); err != nil {
 		return err
