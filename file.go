@@ -82,3 +82,11 @@ func FileExist(s string) bool {
 	}
 	return true
 }
+
+func FilePathFormat(s string) string {
+	path := NewFilePath(s).UnixPath()
+	for strings.Index(path, "//") != -1 {
+		path = strings.Replace(path, "//", "/", -1)
+	}
+	return path
+}

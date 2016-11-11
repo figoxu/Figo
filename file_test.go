@@ -26,3 +26,8 @@ func TestFileExist(t *testing.T) {
 	assert.Equal(t, false, FileExist("./fileNotExist"))
 	log.Println("test pass")
 }
+
+func TestFilePathFormat(t *testing.T) {
+	filePath := "/figo/////test//hello///cool/////how/a/u"
+	log.Println(FilePathFormat(filePath))
+}
