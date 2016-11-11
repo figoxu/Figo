@@ -28,6 +28,6 @@ func TestFileExist(t *testing.T) {
 }
 
 func TestFilePathFormat(t *testing.T) {
-	filePath := "/figo/////test//hello///cool/////how/a/u"
+	filePath := "/figo/////test//hello///cool/////how/a/u\\\\\\\\\\\\\\This\\Is\\\\Realy\\cool"
 	log.Println(FilePathFormat(filePath))
 }
