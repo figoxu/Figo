@@ -65,6 +65,7 @@ func (p *HDFSClient) WriteFile(fullPath string, file *os.File) error {
 		return err
 	}
 	w, err := p.client.Create(fullPath)
+	defer w.Close()
 	if err != nil {
 		return err
 	}
