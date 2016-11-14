@@ -1,9 +1,6 @@
 package Figo
 
-type Cache interface {
-	Put(key, val interface{})
-	Get(key interface{}) interface{}
-}
+import "log"
 
 type Sentry struct {
 	caches []Cache
@@ -12,8 +9,9 @@ type Sentry struct {
 }
 
 func NewSentry(notify func(key interface{}) error, caches ...Cache) *Sentry {
-	kpi_es := []*CacheKPI{}
-	for _, _ := range caches {
+	kpi_es := []CacheKPI{}
+	for index, _ := range caches {
+		log.Println("init cache level:", index)
 		kpi_es = append(kpi_es, CacheKPI{})
 	}
 	return &Sentry{
@@ -40,12 +38,13 @@ func (p *Sentry) Get(key interface{}) interface{} {
 	}
 	missCaches := []Cache{}
 	for index, cache := range p.caches {
+		kpi := p.kpi_es[index]
 		if v := cache.Get(key); v != nil {
-			p.kpi_es[index].Save(true)
+			kpi.Save(true)
 			go upgradeCache(key, v, missCaches...)
 			return v
 		} else {
-			p.kpi_es[index].Save(false)
+			kpi.Save(false)
 			missCaches = append(missCaches, cache)
 		}
 	}
