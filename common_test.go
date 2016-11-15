@@ -6,7 +6,6 @@ import (
 	"github.com/quexer/utee"
 	"log"
 	"math/rand"
-	"sync"
 	"testing"
 	"time"
 )
@@ -104,4 +103,25 @@ func TestClone(t *testing.T) {
 func TestExist(t *testing.T) {
 	v := Exist(1, 2, 3, 4, 1)
 	log.Println(v)
+}
+
+func TestRetryExe(t *testing.T) {
+	alwaysError := func() error {
+		return errors.New("test")
+	}
+	RetryExe(alwaysError, 3, " alwaysError() Method")
+	successFunc := func() error {
+		log.Println("execute")
+		return nil
+	}
+	RetryExe(successFunc, 3, " successFunc() Method")
+	tryCount := 0
+	retrySuccessFunc := func() error {
+		tryCount++
+		if tryCount >= 2 {
+			return nil
+		}
+		return errors.New("retry error")
+	}
+	RetryExe(retrySuccessFunc, 3, " retrySuccessFunc() Method")
 }

@@ -31,3 +31,16 @@ func Exist(expect interface{}, objs ...interface{}) bool {
 	}
 	return false
 }
+
+func RetryExe(business func() error, times int, tips string) {
+	err := business()
+	retry := 0
+	for err != nil && retry < times {
+		retry++
+		err = business()
+	}
+	if retry > 0 && tips != "" {
+		success := (err == nil)
+		log.Println(tips, " Execute With ", retry, " times .  @SuccessFlag:", success)
+	}
+}
