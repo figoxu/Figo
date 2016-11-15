@@ -32,14 +32,12 @@ func catchSampleMethod() {
 }
 
 type SubCloneObj struct {
-	sync.RWMutex
 	data  map[string]string
 	key   string
 	score int
 }
 
 type CloneObj struct {
-	sync.RWMutex
 	Leader   SubCloneObj
 	Member   []SubCloneObj
 	TeamName string
