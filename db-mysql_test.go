@@ -24,8 +24,8 @@ func TestMysqlConf(t *testing.T) {
 	conf := MysqlConf{
 
 		User:       "root",
-		Pwd:        "4rfv%TGB",
-		Host:       "115.159.104.88",
+		Pwd:        "123456",
+		Host:       "127.0.0.1",
 		Port:       "3306",
 		Name:       "figo_research",
 		ConnIdle:   1,
