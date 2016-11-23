@@ -17,8 +17,8 @@ type SeqRedis struct {
 
 func NewSeqRedis(rp *redis.Pool, key string) *SeqRedis {
 	return &SeqRedis{
-		rp: rp,
-		key, key,
+		rp:  rp,
+		key: key,
 	}
 }
 
