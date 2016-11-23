@@ -15,6 +15,13 @@ type SeqRedis struct {
 	key string
 }
 
+func NewSeqRedis(rp *redis.Pool, key string) *SeqRedis {
+	return &SeqRedis{
+		rp: rp,
+		key, key,
+	}
+}
+
 func (p *SeqRedis) Next() int64 {
 	c := p.rp.Get()
 	defer c.Close()
@@ -26,6 +33,10 @@ func (p *SeqRedis) Next() int64 {
 type SeqMem struct {
 	lock    sync.Mutex
 	counter int64
+}
+
+func NewSeqMem() *SeqMem {
+	return &SeqMem{}
 }
 
 func (p *SeqMem) Next() int64 {
