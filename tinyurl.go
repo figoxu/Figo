@@ -1,9 +1,11 @@
 package Figo
 
 import (
+	"fmt"
 	"github.com/go-martini/martini"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -26,10 +28,13 @@ func (p *TinyUrl) Convert(url string) string {
 	return key
 }
 
-func (p *TinyUrl) Handler(key string) martini.Handler {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if val := p.cache.Get(key); val != nil {
+func (p *TinyUrl) Handler() martini.Handler {
+	return func(w http.ResponseWriter, r *http.Request, param martini.Params) {
+		if val := p.cache.Get(param["key"]); val != nil {
 			originUrl := val.(string)
+			if strings.Index(originUrl, "http") == -1 {
+				originUrl = fmt.Sprint("http://", originUrl)
+			}
 			http.Redirect(w, r, originUrl, 301)
 		}
 	}

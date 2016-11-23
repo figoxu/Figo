@@ -23,8 +23,9 @@ func TestConvert(t *testing.T) {
 	cacheObj := NewCacheObj(put, get)
 	tinyURL := NewTinyUrl(cacheObj, seqRedis)
 	key := tinyURL.Convert("http://xxiongdi.iteye.com")
+	log.Println("@key:", key)
 	m := martini.Classic()
-	m.Get("/figoxu", tinyURL.Handler(key))
+	m.Get("/:key", tinyURL.Handler())
 	http.Handle("/", m)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
