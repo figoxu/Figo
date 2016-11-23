@@ -3,6 +3,7 @@ package Figo
 import (
 	"github.com/garyburd/redigo/redis"
 	"github.com/quexer/utee"
+	"sync"
 )
 
 type Seq interface {
@@ -20,4 +21,16 @@ func (p *SeqRedis) Next() int64 {
 	v, err := redis.Int64(c.Do("INCR", p.key))
 	utee.Chk(err)
 	return v
+}
+
+type SeqMem struct {
+	lock    sync.Mutex
+	counter int64
+}
+
+func (p *SeqMem) Next() int64 {
+	p.lock.Lock()
+	defer p.lock.Unlock()
+	p.counter++
+	return p.counter
 }

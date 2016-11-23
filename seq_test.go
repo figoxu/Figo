@@ -14,3 +14,10 @@ func TestSeqRedisNext(t *testing.T) {
 		log.Println(seqRedis.Next())
 	}
 }
+
+func TestSeqMemNext(t *testing.T) {
+	seqMem := SeqMem{}
+	for i := 0; i < 10; i++ {
+		log.Println(seqMem.Next())
+	}
+}
