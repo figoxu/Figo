@@ -1,7 +1,6 @@
 package Figo
 
 import (
-	"github.com/garyburd/redigo/redis"
 	"github.com/go-martini/martini"
 	"net/http"
 	"strconv"
@@ -11,33 +10,27 @@ const (
 	PREFIX = "tiny"
 )
 
-type tinyUrl struct {
+type TinyUrl struct {
 	cache Cache
+	seq   Seq
 }
 
-func NewTinyUrl(cache Cache) tinyUrl {
-	return tinyUrl{cache: cache}
+func NewTinyUrl(cache Cache, seq Seq) TinyUrl {
+	return TinyUrl{cache: cache, seq: seq}
 }
 
-func (t tinyUrl) Convert(url string, rp *redis.Pool) string {
-	//uid := uuid.NewUUID().String()
-	//k := fmt.Sprintf("%s-%s", PREFIX, uid)
-	s := &SequenceObj{}
-	k := s.Next(rp)
-	t.cache.Put(strconv.FormatInt(k, 16), url)
-	return strconv.FormatInt(k, 16)
+func (p *TinyUrl) Convert(url string) string {
+	k := p.seq.Next()
+	key := strconv.FormatInt(k, 16)
+	p.cache.Put(key, url)
+	return key
 }
 
-func (t tinyUrl) GetRedirectUrlHandler(key string) martini.Handler {
+func (p *TinyUrl) Handler(key string) martini.Handler {
 	return func(w http.ResponseWriter, r *http.Request) {
-		originUrl := t.getUrl(key)
-		http.Redirect(w, r, originUrl, 301)
+		if val := p.cache.Get(key); val != nil {
+			originUrl := val.(string)
+			http.Redirect(w, r, originUrl, 301)
+		}
 	}
-}
-
-func (t *tinyUrl) getUrl(key string) string {
-	if v := t.cache.Get(key); v != nil {
-		return v.(string)
-	}
-	return ""
 }
