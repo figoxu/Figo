@@ -30,3 +30,15 @@ func RedisPool(server, auth string) *redis.Pool {
 		},
 	}
 }
+
+func RedisGet(rp *redis.Pool, key interface{}) (interface{}, error) {
+	c := rp.Get()
+	defer c.Close()
+	return c.Do("GET", key)
+}
+
+func RedisSet(rp *redis.Pool, key, val interface{}) (interface{}, error) {
+	c := rp.Get()
+	defer c.Close()
+	return c.Do("SET", key, val)
+}
