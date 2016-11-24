@@ -1,5 +1,7 @@
 package Figo
 
+import "github.com/quexer/utee"
+
 type Cache interface {
 	Put(key, val interface{})
 	Get(key interface{}) interface{}
@@ -23,4 +25,15 @@ func NewCacheObj(put func(key, val interface{}), get func(key interface{}) inter
 		put: put,
 		get: get,
 	}
+}
+
+func NewTimerCache(ttl int, expireCb func(key, value interface{})) *CacheObj {
+	tc := utee.NewTimerCache(ttl, expireCb)
+	put := func(key, val interface{}) {
+		tc.Put(key, val)
+	}
+	get := func(key interface{}) interface{} {
+		return tc.Get(key)
+	}
+	return NewCacheObj(put, get)
 }

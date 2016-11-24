@@ -2,7 +2,6 @@ package Figo
 
 import (
 	"github.com/go-martini/martini"
-	"github.com/quexer/utee"
 	"log"
 	"net/http"
 	"testing"
@@ -13,14 +12,7 @@ func TestConvert(t *testing.T) {
 		rp:  RedisPool("localhost:6379", ""),
 		key: "test_seq",
 	}
-	tc := utee.NewTimerCache(3600, nil)
-	put := func(key, val interface{}) {
-		tc.Put(key, val)
-	}
-	get := func(key interface{}) interface{} {
-		return tc.Get(key)
-	}
-	cacheObj := NewCacheObj(put, get)
+	cacheObj := NewTimerCache(3600, nil)
 	tinyURL := NewTinyUrl(cacheObj, seqRedis)
 	key := tinyURL.Convert("http://xxiongdi.iteye.com")
 	log.Println("@key:", key)
