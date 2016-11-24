@@ -16,3 +16,11 @@ func TestNewTimerCache(t *testing.T) {
 	log.Println(tc.Get("hello"))
 	time.Sleep(time.Duration(11) * time.Second)
 }
+
+func TestNewRedisCache(t *testing.T) {
+	rc := NewRedisCache(RedisPool("localhost:6379", ""))
+	rc.Put("foo", "bar")
+	rc.Put("hello", "world")
+	log.Println(TpString(rc.Get("foo")))
+	log.Println(TpString(rc.Get("hello")))
+}

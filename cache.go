@@ -1,6 +1,9 @@
 package Figo
 
-import "github.com/quexer/utee"
+import (
+	"github.com/garyburd/redigo/redis"
+	"github.com/quexer/utee"
+)
 
 type Cache interface {
 	Put(key, val interface{})
@@ -34,6 +37,21 @@ func NewTimerCache(ttl int, expireCb func(key, value interface{})) *CacheObj {
 	}
 	get := func(key interface{}) interface{} {
 		return tc.Get(key)
+	}
+	return NewCacheObj(put, get)
+}
+
+func NewRedisCache(rp *redis.Pool) *CacheObj {
+	put := func(key, val interface{}) {
+		defer Catch()
+		_, err := RedisSet(rp, key, val)
+		utee.Chk(err)
+	}
+	get := func(key interface{}) interface{} {
+		defer Catch()
+		v, err := RedisGet(rp, key)
+		utee.Chk(err)
+		return v
 	}
 	return NewCacheObj(put, get)
 }
