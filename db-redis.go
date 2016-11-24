@@ -42,3 +42,9 @@ func RedisSet(rp *redis.Pool, key, val interface{}) (interface{}, error) {
 	defer c.Close()
 	return c.Do("SET", key, val)
 }
+
+func RedisSetEx(rp *redis.Pool, key, val interface{}, ttlSec int) (interface{}, error) {
+	c := rp.Get()
+	defer c.Close()
+	return c.Do("SETEX", key, ttlSec, val)
+}

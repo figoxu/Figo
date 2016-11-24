@@ -55,3 +55,18 @@ func NewRedisCache(rp *redis.Pool) *CacheObj {
 	}
 	return NewCacheObj(put, get)
 }
+
+func NewRedisTimerCache(rp *redis.Pool, ttl int) *CacheObj {
+	put := func(key, val interface{}) {
+		defer Catch()
+		_, err := RedisSetEx(rp, key, val, ttl)
+		utee.Chk(err)
+	}
+	get := func(key interface{}) interface{} {
+		defer Catch()
+		v, err := RedisGet(rp, key)
+		utee.Chk(err)
+		return v
+	}
+	return NewCacheObj(put, get)
+}
