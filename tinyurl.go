@@ -2,6 +2,7 @@ package Figo
 
 import (
 	"fmt"
+	"github.com/figoxu/utee"
 	"github.com/go-martini/martini"
 	"net/http"
 	"strconv"
@@ -30,8 +31,10 @@ func (p *TinyUrl) Convert(url string) string {
 
 func (p *TinyUrl) Handler() martini.Handler {
 	return func(w http.ResponseWriter, r *http.Request, param martini.Params) {
+		defer Catch()
 		if val := p.cache.Get(param["key"]); val != nil {
-			originUrl := val.(string)
+			originUrl, err := TpString(val)
+			utee.Chk(err)
 			if strings.Index(originUrl, "http") == -1 {
 				originUrl = fmt.Sprint("http://", originUrl)
 			}
