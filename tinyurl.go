@@ -2,8 +2,8 @@ package Figo
 
 import (
 	"fmt"
-	"github.com/figoxu/utee"
 	"github.com/go-martini/martini"
+	"github.com/quexer/utee"
 	"net/http"
 	"strconv"
 	"strings"
