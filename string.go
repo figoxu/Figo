@@ -1,6 +1,7 @@
 package Figo
 
 import (
+	"fmt"
 	"github.com/quexer/utee"
 	"gopkg.in/iconv.v1"
 	"log"
@@ -16,4 +17,16 @@ func DealStringMessy(result string) string {
 		log.Println("Parse From GBK To  UTF-8")
 	}
 	return result
+}
+
+func splitUTF8BOM(str string) string {
+	b := []byte(str)
+	if len(b) < 3 {
+		return str
+	}
+	prefix := fmt.Sprintf("%X", b[0:3])
+	if prefix == "EFBBBF" {
+		return string(b[3:len(b)])
+	}
+	return str
 }
