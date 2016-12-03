@@ -1,6 +1,7 @@
 package Figo
 
 import (
+	"fmt"
 	"github.com/go-martini/martini"
 	"log"
 	"net/http"
@@ -17,15 +18,19 @@ func TestMonitorMid(t *testing.T) {
 	}
 	m.Post("/test/post", MonitorMid, simpleHandle)
 	m.Get("/test/get", MonitorMid, simpleHandle)
+	m.Get("/test/get/withOutMonitor", simpleHandle)
 	http.Handle("/", m)
 	go func() {
 		log.Fatal(http.ListenAndServe(":8080", nil))
 	}()
 	time.Sleep(time.Second * time.Duration(2))
 	cb := func(msgs ...string) {
-		log.Println(msgs)
-		log.Println(msgs)
+		str := fmt.Sprint(msgs)
+		client := GetSMTPClient("xujh945@qq.com", "xxxxxxxx", "smtp.qq.com:25")
+		client.Send("xujh945@qq.com", str, str)
+		client.Send("jianhui.xu@tendcloud.com", str, str)
 	}
 	MonitorCall("http://localhost:8080/test/post", "post", cb)
 	MonitorCall("http://localhost:8080/test/get", "get", cb)
+	MonitorCall("http://localhost:8080/test/get/withOutMonitor", "get", cb)
 }

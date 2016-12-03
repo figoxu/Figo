@@ -38,8 +38,7 @@ func MonitorCall(restApi, method string, warn func(...string)) {
 		warn("Service Has Http Error @restApi:", restApi, " @rsp:", string(b))
 		return
 	}
-
-	if strings.Contains(string(b), AUTH_RSP) {
+	if !strings.Contains(string(b), AUTH_RSP) {
 		warn("Service Has Check Error @restApi:", restApi, " @rsp:", string(b))
 		return
 	}
