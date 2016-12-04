@@ -2,6 +2,10 @@ package Figo
 
 import (
 	"fmt"
+	"github.com/go-martini/martini"
+	"github.com/pborman/uuid"
+	"github.com/quexer/utee"
+	"github.com/robfig/cron"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -81,4 +85,70 @@ func HttpRequest(api, method string, header http.Header, q url.Values) ([]byte, 
 		return nil, fmt.Errorf("[http get] status err %s, %d\n", api, resp.StatusCode)
 	}
 	return ioutil.ReadAll(resp.Body)
+}
+
+func MonitorMidCB(w http.ResponseWriter, r *http.Request) {
+	if r.Header.Get(MONITOR_HB_KEY) == MONITOR_HB_VAL {
+		if api := r.Header.Get(MONITOR_CB_KEY); api != "" {
+			HttpGet(api, make(http.Header))
+		}
+		return
+	}
+}
+
+type MonitorCallBack struct {
+	tc    *utee.TimerCache
+	cbURL string
+	warn  func(...string)
+}
+
+func NewMonitorCallBack(cbURL string, ttl int, warn func(...string)) *MonitorCallBack {
+	checkFail := func(key, value interface{}) {
+		defer Catch()
+		val, err := TpString(value)
+		utee.Chk(err)
+		warn(val)
+	}
+	return &MonitorCallBack{
+		tc:    utee.NewTimerCache(ttl, checkFail),
+		cbURL: cbURL,
+		warn:  warn,
+	}
+}
+
+func (p *MonitorCallBack) Handler() func(martini.Params) (int, string) {
+	handle := func(params martini.Params) (int, string) {
+		p.tc.Remove(params["id"])
+		return 200, "ok"
+	}
+	return handle
+}
+
+func (p *MonitorCallBack) CallOnTime(cronExp, restApi, method string, warn func(...string)) {
+	c := cron.New()
+	c.AddFunc(cronExp, func() {
+		log.Println("invoke @api:", restApi, "@method:", method)
+		var b []byte
+		var err error
+		header := make(http.Header)
+		header.Add(MONITOR_HB_KEY, MONITOR_HB_VAL)
+		id := uuid.NewUUID().String()
+		api := strings.Replace(p.cbURL, ":id", id, -1)
+		header.Add(MONITOR_CB_KEY, api)
+		if "GET" == strings.ToUpper(method) {
+			b, err = HttpGet(restApi, header)
+		} else {
+			b, err = HttpPost(restApi, url.Values{}, header)
+		}
+		if err != nil {
+			warn("Service Has Http Error @restApi:", restApi, " @rsp:", string(b))
+			return
+		}
+		if !strings.Contains(string(b), MONITOR_HB_RSP) {
+			warn("Service Has Check Error @restApi:", restApi, " @rsp:", string(b))
+			return
+		}
+
+	})
+	c.Start()
 }
