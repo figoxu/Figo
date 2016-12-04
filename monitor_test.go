@@ -16,8 +16,8 @@ func TestMonitorMid(t *testing.T) {
 		log.Println("Enter Handler")
 		return 200, "hello"
 	}
-	m.Post("/test/post", MonitorMid, simpleHandle)
-	m.Get("/test/get", MonitorMid, simpleHandle)
+	m.Post("/test/post", MonitorMidCheck, simpleHandle)
+	m.Get("/test/get", MonitorMidCheck, simpleHandle)
 	m.Get("/test/get/withOutMonitor", simpleHandle)
 	http.Handle("/", m)
 	go func() {

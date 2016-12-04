@@ -2,7 +2,6 @@ package Figo
 
 import (
 	"fmt"
-	"github.com/go-martini/martini"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -11,14 +10,16 @@ import (
 )
 
 const (
-	AUTH_KEY = "FigoMonitor"
-	AUTH_VAL = "ping"
-	AUTH_RSP = "pong"
+	MONITOR_HB_KEY = "MONITOR_HEARTBEAT"
+	MONITOR_HB_VAL = "ping"
+	MONITOR_HB_RSP = "pong"
+	MONITOR_CB_KEY = "MONITOR_CALLBACK"
+	MONITOR_CB_VAL = "q1w2e3r4t5"
 )
 
-func MonitorMid(w http.ResponseWriter, r *http.Request, c martini.Context) {
-	if r.Header.Get(AUTH_KEY) == AUTH_VAL {
-		http.Error(w, AUTH_RSP, 200)
+func MonitorMidCheck(w http.ResponseWriter, r *http.Request) {
+	if r.Header.Get(MONITOR_HB_KEY) == MONITOR_HB_VAL {
+		http.Error(w, MONITOR_HB_RSP, 200)
 		return
 	}
 }
@@ -27,18 +28,17 @@ func MonitorCall(restApi, method string, warn func(...string)) {
 	var b []byte
 	var err error
 	header := make(http.Header)
-	header.Add(AUTH_KEY, AUTH_VAL)
+	header.Add(MONITOR_HB_KEY, MONITOR_HB_VAL)
 	if "GET" == strings.ToUpper(method) {
 		b, err = HttpGet(restApi, header)
 	} else {
-		q := url.Values{}
-		b, err = HttpPost(restApi, q, header)
+		b, err = HttpPost(restApi, url.Values{}, header)
 	}
 	if err != nil {
 		warn("Service Has Http Error @restApi:", restApi, " @rsp:", string(b))
 		return
 	}
-	if !strings.Contains(string(b), AUTH_RSP) {
+	if !strings.Contains(string(b), MONITOR_HB_RSP) {
 		warn("Service Has Check Error @restApi:", restApi, " @rsp:", string(b))
 		return
 	}
