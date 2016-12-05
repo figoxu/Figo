@@ -128,25 +128,16 @@ func (p *MonitorCallBack) CallOnTime(cronExp, restApi, method string, warn func(
 	c := cron.New()
 	c.AddFunc(cronExp, func() {
 		log.Println("invoke @api:", restApi, "@method:", method)
-		var b []byte
-		var err error
 		header := make(http.Header)
 		header.Add(MONITOR_HB_KEY, MONITOR_HB_VAL)
 		id := uuid.NewUUID().String()
 		api := strings.Replace(p.cbURL, ":id", id, -1)
 		header.Add(MONITOR_CB_KEY, api)
+		p.tc.Put(id, api)
 		if "GET" == strings.ToUpper(method) {
-			b, err = HttpGet(restApi, header)
+			HttpGet(restApi, header)
 		} else {
-			b, err = HttpPost(restApi, url.Values{}, header)
-		}
-		if err != nil {
-			warn("Service Has Http Error @restApi:", restApi, " @rsp:", string(b))
-			return
-		}
-		if !strings.Contains(string(b), MONITOR_HB_RSP) {
-			warn("Service Has Check Error @restApi:", restApi, " @rsp:", string(b))
-			return
+			HttpPost(restApi, url.Values{}, header)
 		}
 
 	})
