@@ -2,6 +2,7 @@ package Figo
 
 import (
 	"fmt"
+	"github.com/astaxie/beego/context"
 	"github.com/go-martini/martini"
 	"github.com/pborman/uuid"
 	"github.com/quexer/utee"
@@ -107,7 +108,7 @@ func NewMonitorCallBack(cbURL string, ttl int, warn func(...string)) *MonitorCal
 		defer Catch()
 		val, err := TpString(value)
 		utee.Chk(err)
-		warn(val)
+		warn("Service Has Http Error @restApi:", val)
 	}
 	return &MonitorCallBack{
 		tc:    utee.NewTimerCache(ttl, checkFail),
@@ -124,6 +125,13 @@ func (p *MonitorCallBack) Handler() func(martini.Params) (int, string) {
 	return handle
 }
 
+func (p *MonitorCallBack) BeegoHandler() func(c *context.Context) {
+	return func(c *context.Context) {
+		id := c.Input.Param(":id")
+		p.tc.Remove(id)
+	}
+}
+
 func (p *MonitorCallBack) CallOnTime(cronExp, restApi, method string, warn func(...string)) {
 	c := cron.New()
 	c.AddFunc(cronExp, func() {
@@ -133,7 +141,7 @@ func (p *MonitorCallBack) CallOnTime(cronExp, restApi, method string, warn func(
 		id := uuid.NewUUID().String()
 		api := strings.Replace(p.cbURL, ":id", id, -1)
 		header.Add(MONITOR_CB_KEY, api)
-		p.tc.Put(id, api)
+		p.tc.Put(id, restApi)
 		if "GET" == strings.ToUpper(method) {
 			HttpGet(restApi, header)
 		} else {
