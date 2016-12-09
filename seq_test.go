@@ -6,10 +6,7 @@ import (
 )
 
 func TestSeqRedisNext(t *testing.T) {
-	seqRedis := SeqRedis{
-		rp:  RedisPool("localhost:6379", ""),
-		key: "test_seq",
-	}
+	seqRedis := NewSeqRedis(RedisPool("localhost:6379", ""), "test_seq", -8)
 	for i := 0; i < 10; i++ {
 		log.Println(seqRedis.Next())
 	}

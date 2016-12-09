@@ -15,7 +15,19 @@ type SeqRedis struct {
 	key string
 }
 
-func NewSeqRedis(rp *redis.Pool, key string) *SeqRedis {
+func NewSeqRedis(rp *redis.Pool, key string, conf ...int64) *SeqRedis {
+	if len(conf) > 0 {
+		c := rp.Get()
+		start := conf[0] - 1
+		v, err := redis.Int64(c.Do("GET", key))
+		if err != redis.ErrNil {
+			utee.Chk(err)
+		}
+		existFlag := (err != redis.ErrNil && v > start)
+		if !existFlag {
+			c.Do("SET", key, conf[0]-1)
+		}
+	}
 	return &SeqRedis{
 		rp:  rp,
 		key: key,
@@ -35,7 +47,10 @@ type SeqMem struct {
 	counter int64
 }
 
-func NewSeqMem() *SeqMem {
+func NewSeqMem(conf ...int64) *SeqMem {
+	if len(conf) > 0 {
+		return &SeqMem{counter: conf[0] - 1}
+	}
 	return &SeqMem{}
 }
 
