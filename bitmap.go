@@ -14,7 +14,7 @@ func NewIdService(cache Cache, seq Seq) *IdService {
 
 func (p *IdService) GetOffSet(key string) int64 {
 	if v := p.cache.Get(key); v != nil {
-		return v.(int)
+		return v.(int64)
 	} else {
 		offset := p.seq.Next()
 		p.cache.Put(key, offset)
