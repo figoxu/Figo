@@ -2,6 +2,7 @@ package Figo
 
 import (
 	"fmt"
+	"github.com/astaxie/beego/context"
 	"github.com/go-martini/martini"
 	"github.com/pborman/uuid"
 	"github.com/quexer/utee"
@@ -14,10 +15,10 @@ import (
 )
 
 const (
-	MONITOR_HB_KEY = "MONITOR_HEARTBEAT"
+	MONITOR_HB_KEY = "MONITOR-HEARTBEAT"
 	MONITOR_HB_VAL = "ping"
 	MONITOR_HB_RSP = "pong"
-	MONITOR_CB_KEY = "MONITOR_CALLBACK"
+	MONITOR_CB_KEY = "MONITOR-CALLBACK"
 	MONITOR_CB_VAL = "q1w2e3r4t5"
 )
 
@@ -107,7 +108,7 @@ func NewMonitorCallBack(cbURL string, ttl int, warn func(...string)) *MonitorCal
 		defer Catch()
 		val, err := TpString(value)
 		utee.Chk(err)
-		warn(val)
+		warn("Service Has Http Error @restApi:", val)
 	}
 	return &MonitorCallBack{
 		tc:    utee.NewTimerCache(ttl, checkFail),
@@ -124,29 +125,27 @@ func (p *MonitorCallBack) Handler() func(martini.Params) (int, string) {
 	return handle
 }
 
+func (p *MonitorCallBack) BeegoHandler() func(c *context.Context) {
+	return func(c *context.Context) {
+		id := c.Input.Param(":id")
+		p.tc.Remove(id)
+	}
+}
+
 func (p *MonitorCallBack) CallOnTime(cronExp, restApi, method string, warn func(...string)) {
 	c := cron.New()
 	c.AddFunc(cronExp, func() {
 		log.Println("invoke @api:", restApi, "@method:", method)
-		var b []byte
-		var err error
 		header := make(http.Header)
 		header.Add(MONITOR_HB_KEY, MONITOR_HB_VAL)
 		id := uuid.NewUUID().String()
 		api := strings.Replace(p.cbURL, ":id", id, -1)
 		header.Add(MONITOR_CB_KEY, api)
+		p.tc.Put(id, restApi)
 		if "GET" == strings.ToUpper(method) {
-			b, err = HttpGet(restApi, header)
+			HttpGet(restApi, header)
 		} else {
-			b, err = HttpPost(restApi, url.Values{}, header)
-		}
-		if err != nil {
-			warn("Service Has Http Error @restApi:", restApi, " @rsp:", string(b))
-			return
-		}
-		if !strings.Contains(string(b), MONITOR_HB_RSP) {
-			warn("Service Has Check Error @restApi:", restApi, " @rsp:", string(b))
-			return
+			HttpPost(restApi, url.Values{}, header)
 		}
 
 	})
