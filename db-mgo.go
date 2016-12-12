@@ -12,6 +12,15 @@ type MgoSe struct {
 	referSession *mgo.Session
 }
 
+func NewMgoSe(referSession *mgo.Session) *MgoSe {
+	return &MgoSe{
+		referSession: referSession,
+	}
+}
+func (p *MgoSe) Copy() *MgoSe {
+	return NewMgoSe(p.referSession)
+}
+
 func (p *MgoSe) SetMode(consistency mgo.Mode, refresh bool) {
 	p.Session().SetMode(consistency, refresh)
 }
