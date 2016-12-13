@@ -18,6 +18,7 @@ type SeqRedis struct {
 func NewSeqRedis(rp *redis.Pool, key string, conf ...int64) *SeqRedis {
 	if len(conf) > 0 {
 		c := rp.Get()
+		defer c.Close()
 		start := conf[0] - 1
 		v, err := redis.Int64(c.Do("GET", key))
 		if err != redis.ErrNil {
