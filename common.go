@@ -37,7 +37,9 @@ func RetryExe(business func() error, times int, tips string) {
 	retry := 0
 	for err != nil && retry < times {
 		retry++
-		err = business()
+		if err = business(); err == nil {
+			break
+		}
 	}
 	if retry > 0 && tips != "" {
 		success := (err == nil)
