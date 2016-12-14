@@ -103,6 +103,9 @@ func TestClone(t *testing.T) {
 func TestExist(t *testing.T) {
 	v := Exist(1, 2, 3, 4, 1)
 	log.Println(v)
+	a := []string{"hello", "word"}
+	log.Println(Exist("hello", ICast.FromStrings(a)...))
+	log.Println(Exist("foo", ICast.FromStrings(a)...))
 }
 
 func TestRetryExe(t *testing.T) {
