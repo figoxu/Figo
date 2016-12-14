@@ -1,7 +1,10 @@
 package Figo
 
 import (
+	"errors"
+	"github.com/figoxu/Figo"
 	"github.com/garyburd/redigo/redis"
+	"strings"
 	"time"
 )
 
@@ -47,4 +50,40 @@ func RedisSetEx(rp *redis.Pool, key, val interface{}, ttlSec int) (interface{}, 
 	c := rp.Get()
 	defer c.Close()
 	return c.Do("SETEX", key, ttlSec, val)
+}
+
+func RedisGetbit(rp *redis.Pool, key interface{}, offset int) (bool, error) {
+	c := rp.Get()
+	defer c.Close()
+	v, err := redis.Int(c.Do("getbit", key, offset))
+	if err != nil {
+		return false, err
+	}
+	return v == 1, nil
+}
+
+func RedisSetbit(rp *redis.Pool, key interface{}, offset int) error {
+	c := rp.Get()
+	defer c.Close()
+	return c.Send("setbit", key, offset, 1)
+}
+
+func RedisBitcount(rp *redis.Pool, key interface{}) (int, error) {
+	c := rp.Get()
+	defer c.Close()
+	return redis.Int(c.Do("bitcount", key))
+}
+
+func RedisBitop(rp *redis.Pool, tp string, destkey interface{}, key ...interface{}) error {
+	c := rp.Get()
+	defer c.Close()
+	lowerTp := strings.ToLower(tp)
+	if !Figo.Exist(lowerTp, "or", "and") {
+		return errors.New("bad tp")
+	}
+	keys := []interface{}{lowerTp, destkey}
+	for _, v := range key {
+		keys = append(keys, v)
+	}
+	return c.Send("bitop", keys...)
 }
