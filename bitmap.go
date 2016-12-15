@@ -2,8 +2,6 @@ package Figo
 
 import (
 	"github.com/garyburd/redigo/redis"
-	"github.com/quexer/utee"
-	"log"
 )
 
 type IdService struct {
@@ -58,11 +56,17 @@ func (p *RedisBitMap) Set(offset int, val bool) error {
 	return c.Send("setbit", p.key, offset, 0)
 }
 
+func (p *RedisBitMap) Get(offset int) int {
+	c := p.rp.Get()
+	defer c.Close()
+	v, _ := redis.Int(c.Do("getbit", p.key, offset))
+	return v
+}
+
 func (p *RedisBitMap) Count() int {
 	c := p.rp.Get()
 	defer c.Close()
-	count, err := redis.Int(c.Do("bitcount", p.key))
-	utee.Chk(err)
+	count, _ := redis.Int(c.Do("bitcount", p.key))
 	return count
 }
 
@@ -73,7 +77,6 @@ func (p *RedisBitMap) And(resultKey string, keys ...string) *RedisBitMap {
 	for _, v := range keys {
 		params = append(params, v)
 	}
-	log.Println(params)
 	c.Send("bitop", params...)
 	return &RedisBitMap{
 		rp:  p.rp,
@@ -88,7 +91,6 @@ func (p *RedisBitMap) Or(resultKey string, keys ...string) *RedisBitMap {
 	for _, v := range keys {
 		params = append(params, v)
 	}
-	log.Println(params)
 	c.Send("bitop", params...)
 	return &RedisBitMap{
 		rp:  p.rp,
