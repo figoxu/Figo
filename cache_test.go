@@ -37,7 +37,7 @@ func TestNewRedisTimerCache(t *testing.T) {
 }
 
 func TestNewAsCache(t *testing.T) {
-	ac := AsUtee.AsConnect("106.75.27.144:3000")
+	ac := AsUtee.AsConnect("127.0.0.1:3000")
 	type Val struct {
 		Offset int64
 	}
