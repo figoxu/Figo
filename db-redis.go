@@ -2,7 +2,6 @@ package Figo
 
 import (
 	"errors"
-	"github.com/figoxu/Figo"
 	"github.com/garyburd/redigo/redis"
 	"strings"
 	"time"
@@ -78,7 +77,7 @@ func RedisBitop(rp *redis.Pool, tp string, destkey interface{}, key ...interface
 	c := rp.Get()
 	defer c.Close()
 	lowerTp := strings.ToLower(tp)
-	if !Figo.Exist(lowerTp, "or", "and") {
+	if !Exist(lowerTp, "or", "and") {
 		return errors.New("bad tp")
 	}
 	keys := []interface{}{lowerTp, destkey}
