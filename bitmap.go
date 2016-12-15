@@ -5,6 +5,8 @@ type IdService struct {
 	seq   Seq
 }
 
+const OFFSET_NOT_FOUND = -1
+
 func NewIdService(cache Cache, seq Seq) *IdService {
 	return &IdService{
 		cache: cache,
@@ -13,7 +15,7 @@ func NewIdService(cache Cache, seq Seq) *IdService {
 }
 
 func (p *IdService) GetOffSet(key string) int64 {
-	if v := p.cache.Get(key); v != nil {
+	if v := p.cache.Get(key); v != nil && v != OFFSET_NOT_FOUND {
 		return v.(int64)
 	} else {
 		offset := p.seq.Next()
