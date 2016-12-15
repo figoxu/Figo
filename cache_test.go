@@ -35,3 +35,14 @@ func TestNewRedisTimerCache(t *testing.T) {
 	log.Println(TpString(rc.Get("foo")))
 	log.Println(TpString(rc.Get("hello")))
 }
+
+func TestNewAsCache(t *testing.T) {
+	ac := AsUtee.AsConnect("106.75.27.144:3000")
+	type Val struct {
+		Offset int64
+	}
+	cache := NewAsCache(ac, AsUtee.NewSetInfo("push", "test"), TypeOf(Val{}))
+	cache.put("foo2016", &Val{88888})
+	v := cache.get("foo2016")
+	log.Println(v.(*Val))
+}

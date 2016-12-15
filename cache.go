@@ -1,8 +1,11 @@
 package Figo
 
 import (
+	"fmt"
+	as "github.com/aerospike/aerospike-client-go"
 	"github.com/garyburd/redigo/redis"
 	"github.com/quexer/utee"
+	"reflect"
 )
 
 type Cache interface {
@@ -66,6 +69,20 @@ func NewRedisTimerCache(rp *redis.Pool, ttl int) *CacheObj {
 		defer Catch()
 		v, err := RedisGet(rp, key)
 		utee.Chk(err)
+		return v
+	}
+	return NewCacheObj(put, get)
+}
+
+func NewAsCache(ac *as.Client, setInfo AsSetInfo, tp reflect.Type) *CacheObj {
+	put := func(key, val interface{}) {
+		defer Catch()
+		err := AsUtee.Put(ac, setInfo, fmt.Sprint(key), val)
+		utee.Chk(err)
+	}
+	get := func(key interface{}) interface{} {
+		v := reflect.New(tp).Interface()
+		AsUtee.Get(ac, setInfo, fmt.Sprint(key), v)
 		return v
 	}
 	return NewCacheObj(put, get)
