@@ -1,5 +1,11 @@
 package Figo
 
+import (
+	"github.com/garyburd/redigo/redis"
+	"github.com/quexer/utee"
+	"log"
+)
+
 type IdService struct {
 	cache Cache
 	seq   Seq
@@ -21,5 +27,71 @@ func (p *IdService) GetOffSet(key string) int64 {
 		offset := p.seq.Next()
 		p.cache.Put(key, offset)
 		return offset
+	}
+}
+
+type RedisBitMap struct {
+	rp  *redis.Pool
+	key string
+}
+
+func NewRedisBitMap(rp *redis.Pool, key string) *RedisBitMap {
+	return &RedisBitMap{
+		rp:  rp,
+		key: key,
+	}
+}
+
+func (p *RedisBitMap) Clear() error {
+	c := p.rp.Get()
+	defer c.Close()
+	_, err := c.Do("DEL", p.key)
+	return err
+}
+
+func (p *RedisBitMap) Set(offset int, val bool) error {
+	c := p.rp.Get()
+	defer c.Close()
+	if val {
+		return c.Send("setbit", p.key, offset, 1)
+	}
+	return c.Send("setbit", p.key, offset, 0)
+}
+
+func (p *RedisBitMap) Count() int {
+	c := p.rp.Get()
+	defer c.Close()
+	count, err := redis.Int(c.Do("bitcount", p.key))
+	utee.Chk(err)
+	return count
+}
+
+func (p *RedisBitMap) And(resultKey string, keys ...string) *RedisBitMap {
+	c := p.rp.Get()
+	defer c.Close()
+	params := []interface{}{"and", resultKey, p.key}
+	for _, v := range keys {
+		params = append(params, v)
+	}
+	log.Println(params)
+	c.Send("bitop", params...)
+	return &RedisBitMap{
+		rp:  p.rp,
+		key: resultKey,
+	}
+}
+
+func (p *RedisBitMap) Or(resultKey string, keys ...string) *RedisBitMap {
+	c := p.rp.Get()
+	defer c.Close()
+	params := []interface{}{"or", resultKey, p.key}
+	for _, v := range keys {
+		params = append(params, v)
+	}
+	log.Println(params)
+	c.Send("bitop", params...)
+	return &RedisBitMap{
+		rp:  p.rp,
+		key: resultKey,
 	}
 }
