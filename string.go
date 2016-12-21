@@ -34,8 +34,8 @@ func SplitUTF8BOM(str string) string {
 }
 
 type Parser struct {
-	prepareReg []string
-	processReg []string
+	PrepareReg []string
+	ProcessReg []string
 }
 
 func (p *Parser) Exe(content string) []string {
@@ -56,10 +56,10 @@ func (p *Parser) Exe(content string) []string {
 		return result
 	}
 	result := []string{content}
-	for _, reg := range p.prepareReg {
+	for _, reg := range p.PrepareReg {
 		result = prep(reg, result...)
 	}
-	for _, reg := range p.processReg {
+	for _, reg := range p.ProcessReg {
 		result = proc(reg, result...)
 	}
 	return TrimAndClear(result...)
