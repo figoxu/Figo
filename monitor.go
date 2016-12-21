@@ -89,8 +89,24 @@ func HttpRequest(api, method string, header http.Header, q url.Values) ([]byte, 
 }
 
 func MonitorMidCB(w http.ResponseWriter, r *http.Request) {
-	if r.Header.Get(MONITOR_HB_KEY) == MONITOR_HB_VAL {
-		if api := r.Header.Get(MONITOR_CB_KEY); api != "" {
+	getV := func(key string, header http.Header) string {
+		uKey, lKey := strings.ToUpper(key), strings.ToLower(key)
+		if v := header.Get(key); v != "" {
+			log.Println("@key:", key, " @v:", v)
+			return v
+		}
+		if v := header.Get(uKey); v != "" {
+			log.Println("@key:", uKey, " @v:", v)
+			return v
+		}
+		if v := header.Get(lKey); v != "" {
+			log.Println("@key:", lKey, " @v:", v)
+			return v
+		}
+		return ""
+	}
+	if getV(MONITOR_HB_KEY, r.Header) == MONITOR_HB_VAL {
+		if api := getV(MONITOR_CB_KEY, r.Header); api != "" {
 			HttpGet(api, make(http.Header))
 		}
 		return
@@ -142,11 +158,14 @@ func (p *MonitorCallBack) CallOnTime(cronExp, restApi, method string, warn func(
 		api := strings.Replace(p.cbURL, ":id", id, -1)
 		header.Add(MONITOR_CB_KEY, api)
 		p.tc.Put(id, restApi)
+		var b []byte
+		var err error
 		if "GET" == strings.ToUpper(method) {
-			HttpGet(restApi, header)
+			b, err = HttpGet(restApi, header)
 		} else {
-			HttpPost(restApi, url.Values{}, header)
+			b, err = HttpPost(restApi, url.Values{}, header)
 		}
+		log.Println("[monitor] @rsp:", string(b), "  @err:", err)
 
 	})
 	c.Start()
