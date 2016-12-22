@@ -16,7 +16,7 @@ type AsSetInfo struct {
 }
 
 func (p *AerospikeUtil) AsConnect(s string) *as.Client {
-	h, port, err := utee.ParseUrl(s)
+	h, port, err := ParseUrl(s)
 	utee.Chk(err)
 	ac, err := as.NewClient(h, port)
 	utee.Chk(err)

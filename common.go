@@ -2,10 +2,13 @@ package Figo
 
 import (
 	"errors"
+	"fmt"
 	"github.com/quexer/utee"
 	"log"
 	"reflect"
 	"runtime/debug"
+	"strconv"
+	"strings"
 )
 
 func Catch() {
@@ -43,4 +46,13 @@ func RetryExe(business func() error, times int, tips string) {
 		success := (err == nil)
 		log.Println(tips, " Execute With ", retry, " times .  @SuccessFlag:", success)
 	}
+}
+
+func ParseUrl(s string) (string, int, error) {
+	a := strings.Split(s, ":")
+	if len(a) != 2 {
+		return "", 0, fmt.Errorf("bad url %s", s)
+	}
+	port, err := strconv.Atoi(a[1])
+	return a[0], port, err
 }
