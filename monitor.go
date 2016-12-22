@@ -22,6 +22,12 @@ const (
 	MONITOR_CB_VAL = "q1w2e3r4t5"
 )
 
+var (
+	MONITOR_BODY = url.Values{
+		"sys_monitor_body": []string{"handle the case of skip body by server"},
+	}
+)
+
 func MonitorMidCheck(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get(MONITOR_HB_KEY) == MONITOR_HB_VAL {
 		http.Error(w, MONITOR_HB_RSP, 200)
@@ -35,9 +41,9 @@ func MonitorCall(restApi, method string, warn func(...string)) {
 	header := make(http.Header)
 	header.Add(MONITOR_HB_KEY, MONITOR_HB_VAL)
 	if "GET" == strings.ToUpper(method) {
-		b, err = HttpGet(restApi, header)
+		b, err = HttpGet(restApi, MONITOR_BODY, header)
 	} else {
-		b, err = HttpPost(restApi, url.Values{}, header)
+		b, err = HttpPost(restApi, MONITOR_BODY, header)
 	}
 	if err != nil {
 		warn("Service Has Http Error @restApi:", restApi, " @rsp:", string(b))
@@ -54,8 +60,8 @@ func HttpPost(api string, q url.Values, header http.Header) ([]byte, error) {
 	return HttpRequest(api, "POST", header, q)
 }
 
-func HttpGet(api string, header http.Header) ([]byte, error) {
-	return HttpRequest(api, "GET", header, nil)
+func HttpGet(api string, q url.Values, header http.Header) ([]byte, error) {
+	return HttpRequest(api, "GET", header, q)
 }
 
 func HttpRequest(api, method string, header http.Header, q url.Values) ([]byte, error) {
@@ -107,7 +113,7 @@ func MonitorMidCB(w http.ResponseWriter, r *http.Request) {
 	}
 	if getV(MONITOR_HB_KEY, r.Header) == MONITOR_HB_VAL {
 		if api := getV(MONITOR_CB_KEY, r.Header); api != "" {
-			HttpGet(api, make(http.Header))
+			HttpGet(api, MONITOR_BODY, make(http.Header))
 		}
 		return
 	}
@@ -161,9 +167,9 @@ func (p *MonitorCallBack) CallOnTime(cronExp, restApi, method string, warn func(
 		var b []byte
 		var err error
 		if "GET" == strings.ToUpper(method) {
-			b, err = HttpGet(restApi, header)
+			b, err = HttpGet(restApi, MONITOR_BODY, header)
 		} else {
-			b, err = HttpPost(restApi, url.Values{}, header)
+			b, err = HttpPost(restApi, MONITOR_BODY, header)
 		}
 		log.Println("[monitor] @rsp:", string(b), "  @err:", err)
 
