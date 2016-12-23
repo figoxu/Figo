@@ -2,7 +2,6 @@ package Figo
 
 import (
 	"fmt"
-	"github.com/go-martini/martini"
 	"log"
 	"net/http"
 	"testing"
@@ -10,8 +9,7 @@ import (
 )
 
 func TestMonitorMid(t *testing.T) {
-	m := martini.Classic()
-	m.Handlers(martini.Recovery())
+	m := NewMartini(1, 10, "")
 	simpleHandle := func() (int, string) {
 		log.Println("Enter Handler")
 		return 200, "hello"
@@ -19,7 +17,6 @@ func TestMonitorMid(t *testing.T) {
 	m.Post("/test/post", MonitorMidCheck, simpleHandle)
 	m.Get("/test/get", MonitorMidCheck, simpleHandle)
 	m.Get("/test/get/withOutMonitor", simpleHandle)
-	http.Handle("/", m)
 	go func() {
 		log.Fatal(http.ListenAndServe(":8080", nil))
 	}()
