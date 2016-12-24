@@ -94,25 +94,26 @@ func HttpRequest(api, method string, header http.Header, q url.Values) ([]byte, 
 	return ioutil.ReadAll(resp.Body)
 }
 
-func MonitorMidCB(w http.ResponseWriter, r *http.Request) {
-	getV := func(key string, header http.Header) string {
-		uKey, lKey := strings.ToUpper(key), strings.ToLower(key)
-		if v := header.Get(key); v != "" {
-			log.Println("@key:", key, " @v:", v)
-			return v
-		}
-		if v := header.Get(uKey); v != "" {
-			log.Println("@key:", uKey, " @v:", v)
-			return v
-		}
-		if v := header.Get(lKey); v != "" {
-			log.Println("@key:", lKey, " @v:", v)
-			return v
-		}
-		return ""
+func getHeadValue(key string, header http.Header) string {
+	uKey, lKey := strings.ToUpper(key), strings.ToLower(key)
+	if v := header.Get(key); v != "" {
+		log.Println("@key:", key, " @v:", v)
+		return v
 	}
-	if getV(MONITOR_HB_KEY, r.Header) == MONITOR_HB_VAL {
-		if api := getV(MONITOR_CB_KEY, r.Header); api != "" {
+	if v := header.Get(uKey); v != "" {
+		log.Println("@key:", uKey, " @v:", v)
+		return v
+	}
+	if v := header.Get(lKey); v != "" {
+		log.Println("@key:", lKey, " @v:", v)
+		return v
+	}
+	return ""
+}
+
+func MonitorMidCB(w http.ResponseWriter, r *http.Request) {
+	if getHeadValue(MONITOR_HB_KEY, r.Header) == MONITOR_HB_VAL {
+		if api := getHeadValue(MONITOR_CB_KEY, r.Header); api != "" {
 			HttpGet(api, MONITOR_BODY, make(http.Header))
 		}
 		return
