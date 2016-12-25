@@ -1,7 +1,9 @@
 package Figo
 
 import (
+	"github.com/quexer/utee"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -58,4 +60,21 @@ func download(localFileName, remoteFileName string) error {
 	}
 	println("written: ", written)
 	return nil
+}
+
+func HttpForeignHelp(w http.ResponseWriter, r *http.Request) {
+	api := getHeadValue("url", r.Header)
+	buf := make([]byte, 10*1024)
+	r.Body.Read(buf)
+	body := ioutil.NopCloser(r.Body)
+	client := &http.Client{}
+	req, _ := http.NewRequest("POST", api, body)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+	resp, err := client.Do(req)
+	utee.Chk(err)
+	defer resp.Body.Close()
+	data, err := ioutil.ReadAll(resp.Body)
+	utee.Chk(err)
+	log.Println(string(data), err)
+	w.Write(data)
 }
