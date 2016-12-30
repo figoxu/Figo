@@ -9,6 +9,8 @@ import (
 	"runtime/debug"
 	"strconv"
 	"strings"
+	"bufio"
+	"os"
 )
 
 func Catch() {
@@ -56,3 +58,12 @@ func ParseUrl(s string) (string, int, error) {
 	port, err := strconv.Atoi(a[1])
 	return a[0], port, err
 }
+
+func ReadInput(tips string) string {
+	log.Println(tips)
+	reader := bufio.NewReader(os.Stdin)
+	data, _, _ := reader.ReadLine()
+	return string(data)
+}
+
+
