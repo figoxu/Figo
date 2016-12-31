@@ -22,7 +22,6 @@ type Test2 struct {
 
 func TestMysqlConf(t *testing.T) {
 	conf := MysqlConf{
-
 		User:       "root",
 		Pwd:        "123456",
 		Host:       "127.0.0.1",
