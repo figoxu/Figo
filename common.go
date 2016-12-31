@@ -1,16 +1,16 @@
 package Figo
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"github.com/quexer/utee"
 	"log"
+	"os"
 	"reflect"
 	"runtime/debug"
 	"strconv"
 	"strings"
-	"bufio"
-	"os"
 )
 
 func Catch() {
@@ -65,5 +65,3 @@ func ReadInput(tips string) string {
 	data, _, _ := reader.ReadLine()
 	return string(data)
 }
-
-
