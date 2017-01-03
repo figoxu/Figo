@@ -2,7 +2,9 @@ package Figo
 
 import (
 	"fmt"
+	"github.com/quexer/utee"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -59,4 +61,11 @@ func TrimAndClear(strs ...string) []string {
 		}
 	}
 	return result
+}
+
+func Md5Shard(key string, piece int) string {
+	shardVal, err := strconv.ParseUint(utee.PlainMd5(key)[16:32], 16, 0)
+	utee.Chk(err)
+	shardVal = shardVal % uint64(piece)
+	return fmt.Sprint(key, "_", shardVal)
 }
