@@ -63,11 +63,15 @@ func TrimAndClear(strs ...string) []string {
 	return result
 }
 
-func Md5Shard(key string, piece int) string {
+func Md5ShardPiece(key string, piece int) int {
 	shardVal, err := strconv.ParseUint(utee.PlainMd5(key)[16:32], 16, 0)
 	utee.Chk(err)
 	shardVal = shardVal % uint64(piece)
-	return fmt.Sprint(key, "_", shardVal)
+	return int(shardVal)
+}
+
+func Md5Shard(key string, piece int) string {
+	return fmt.Sprint(key, "_", Md5ShardPiece(key, piece))
 }
 
 // snake string, XxYy to xx_yy , XxYY to xx_yy
