@@ -29,6 +29,20 @@ func (p *RedisShardSortedSet) ZAdd(score int, name string) {
 	c.Do("ZADD", p.realKey(name), score, name)
 }
 
+type SSItem struct {
+	key   string
+	score int
+}
+
+func (p *RedisShardSortedSet) ZBatchAdd(ssitems ...SSItem) {
+	c := p.rp.Get()
+	defer c.Close()
+	for _, ssitem := range ssitems {
+		c.Send("ZADD", p.realKey(ssitem.key), ssitem.score, ssitem.key)
+	}
+	c.Flush()
+}
+
 func (p *RedisShardSortedSet) ZScore(name string) int {
 	c := p.rp.Get()
 	defer c.Close()
