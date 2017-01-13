@@ -98,6 +98,6 @@ func Println(theme string, v ...interface{}) {
 	case THEME_White:
 		color.White(s)
 	default:
-		log.Print(s)
+		log.Println(s)
 	}
 }
