@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/fatih/color"
 	"github.com/quexer/utee"
 	"log"
 	"os"
@@ -59,8 +60,38 @@ func ParseUrl(s string) (string, int, error) {
 	return a[0], port, err
 }
 
-func ReadInput(tips string) string {
-	log.Println(tips)
+const (
+	THEME_Black   = "black"
+	THEME_Red     = "red"
+	THEME_Green   = "green"
+	THEME_Yellow  = "yellow"
+	THEME_Blue    = "blue"
+	THEME_Magenta = "megenta"
+	THEME_Cyan    = "cyan"
+	THEME_White   = "white"
+)
+
+func ReadInput(tips, theme string) string {
+	switch theme {
+	case THEME_Black:
+		color.Black(tips)
+	case THEME_Red:
+		color.Red(tips)
+	case THEME_Green:
+		color.Green(tips)
+	case THEME_Yellow:
+		color.Yellow(tips)
+	case THEME_Blue:
+		color.Blue(tips)
+	case THEME_Magenta:
+		color.Magenta(tips)
+	case THEME_Cyan:
+		color.Cyan(tips)
+	case THEME_White:
+		color.White(tips)
+	default:
+		log.Print(tips)
+	}
 	reader := bufio.NewReader(os.Stdin)
 	data, _, _ := reader.ReadLine()
 	return string(data)
