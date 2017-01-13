@@ -72,27 +72,32 @@ const (
 )
 
 func ReadInput(tips, theme string) string {
-	switch theme {
-	case THEME_Black:
-		color.Black(tips)
-	case THEME_Red:
-		color.Red(tips)
-	case THEME_Green:
-		color.Green(tips)
-	case THEME_Yellow:
-		color.Yellow(tips)
-	case THEME_Blue:
-		color.Blue(tips)
-	case THEME_Magenta:
-		color.Magenta(tips)
-	case THEME_Cyan:
-		color.Cyan(tips)
-	case THEME_White:
-		color.White(tips)
-	default:
-		log.Print(tips)
-	}
+	Println(theme, tips)
 	reader := bufio.NewReader(os.Stdin)
 	data, _, _ := reader.ReadLine()
 	return string(data)
+}
+
+func Println(theme string, v ...interface{}) {
+	s := fmt.Sprint(v)
+	switch theme {
+	case THEME_Black:
+		color.Black(s)
+	case THEME_Red:
+		color.Red(s)
+	case THEME_Green:
+		color.Green(s)
+	case THEME_Yellow:
+		color.Yellow(s)
+	case THEME_Blue:
+		color.Blue(s)
+	case THEME_Magenta:
+		color.Magenta(s)
+	case THEME_Cyan:
+		color.Cyan(s)
+	case THEME_White:
+		color.White(s)
+	default:
+		log.Print(s)
+	}
 }

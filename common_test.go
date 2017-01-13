@@ -128,3 +128,11 @@ func TestRetryExe(t *testing.T) {
 	}
 	RetryExe(retrySuccessFunc, 3, " retrySuccessFunc() Method")
 }
+
+func TestPrint(t *testing.T) {
+	Print(THEME_Magenta, "how ")
+	Print(THEME_Magenta, "are ")
+	Print(THEME_Magenta, "you ")
+	Println(THEME_Magenta, "hello")
+	log.Println("hello")
+}
