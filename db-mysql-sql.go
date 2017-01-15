@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/astaxie/beego/orm"
 	"strings"
+	"log"
 )
 
 type SQLTpl struct {
@@ -45,6 +46,26 @@ type DAO interface {
 
 type Manager struct {
 	Dao DAO
+}
+
+func (p *Manager) QueryOne(filter string) interface{} {
+	result := p.Dao.GetItemContainer()
+	tableName := GetTableName(result)
+	dao := p.Dao.GetORM()
+	query := fmt.Sprint("select * from ", tableName, " where 1=1 and ", filter)
+	log.Println("@Query:",query)
+	dao.Raw(query).QueryRow(result)
+	return result
+}
+
+
+func (p *Manager) QueryList(filter string) interface{} {
+	result := p.Dao.GetItemsContainer()
+	tableName := GetTableName(p.Dao.GetItemContainer())
+	dao := p.Dao.GetORM()
+	query := fmt.Sprint("select * from ", tableName, " where 1=1 and ", filter)
+	dao.Raw(query).QueryRow(&result)
+	return result
 }
 
 func (p *Manager) CountAll() int {
