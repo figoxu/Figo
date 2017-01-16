@@ -3,8 +3,8 @@ package Figo
 import (
 	"fmt"
 	"github.com/astaxie/beego/orm"
-	"strings"
 	"log"
+	"strings"
 )
 
 type SQLTpl struct {
@@ -53,11 +53,10 @@ func (p *Manager) QueryOne(filter string) interface{} {
 	tableName := GetTableName(result)
 	dao := p.Dao.GetORM()
 	query := fmt.Sprint("select * from ", tableName, " where 1=1 and ", filter)
-	log.Println("@Query:",query)
+	log.Println("@Query:", query)
 	dao.Raw(query).QueryRow(result)
 	return result
 }
-
 
 func (p *Manager) QueryList(filter string) interface{} {
 	result := p.Dao.GetItemsContainer()
