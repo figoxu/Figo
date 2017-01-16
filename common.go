@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/fatih/color"
+	"github.com/figoxu/color"
 	"github.com/quexer/utee"
 	"log"
 	"os"
@@ -71,15 +71,16 @@ const (
 	THEME_White   = "white"
 )
 
-func ReadInput(tips, theme string) string {
-	Println(theme, tips)
+func ReadInput(tips, tipTheme, inputTheme string) string {
+	Print(tipTheme, tips)
+	Print(inputTheme, " ")
 	reader := bufio.NewReader(os.Stdin)
 	data, _, _ := reader.ReadLine()
 	return string(data)
 }
 
-func Println(theme string, v ...interface{}) {
-	s := fmt.Sprint(v)
+func Print(theme string, v ...interface{}) {
+	s := fmt.Sprint(v...)
 	switch theme {
 	case THEME_Black:
 		color.Black(s)
@@ -100,4 +101,9 @@ func Println(theme string, v ...interface{}) {
 	default:
 		log.Println(s)
 	}
+}
+
+func Println(theme string, v ...interface{}) {
+	s := fmt.Sprint(v...)
+	Print(s, "\n")
 }

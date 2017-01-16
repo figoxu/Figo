@@ -131,8 +131,8 @@ func TestRetryExe(t *testing.T) {
 
 func TestPrint(t *testing.T) {
 	Print(THEME_Magenta, "how ")
-	Print(THEME_Magenta, "are ")
-	Print(THEME_Magenta, "you ")
+	Print(THEME_Blue, "are ")
+	Print(THEME_Green, "you ")
 	Println(THEME_Magenta, "hello")
 	log.Println("hello")
 }
