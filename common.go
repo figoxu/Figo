@@ -105,5 +105,5 @@ func Print(theme string, v ...interface{}) {
 
 func Println(theme string, v ...interface{}) {
 	s := fmt.Sprint(v...)
-	Print(s, "\n")
+	Print(theme, s, "\n")
 }
