@@ -19,7 +19,18 @@ func TpInt(v interface{}) (int, error) {
 	default:
 		return strconv.Atoi(fmt.Sprint(reply))
 	}
-	return 0, fmt.Errorf("unexpected type for Int, got type %T", v)
+}
+
+func TpInt64(v interface{}) (int64, error) {
+	switch reply := v.(type) {
+	case int64:
+		return reply, nil
+	case []byte:
+		n, err := strconv.ParseInt(string(reply), 10, 64)
+		return n, err
+	default:
+		return strconv.ParseInt(fmt.Sprint(reply), 10, 64)
+	}
 }
 
 func TpString(v interface{}) (string, error) {
