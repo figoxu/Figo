@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/astaxie/beego/orm"
 	"github.com/figoxu/color"
 	"github.com/quexer/utee"
+	mgo "gopkg.in/mgo.v2"
 	"log"
 	"os"
 	"reflect"
@@ -58,6 +60,10 @@ func ParseUrl(s string) (string, int, error) {
 	}
 	port, err := strconv.Atoi(a[1])
 	return a[0], port, err
+}
+
+func NotFound(err error) bool {
+	return err == mgo.ErrNotFound || err == orm.ErrNoRows
 }
 
 const (
