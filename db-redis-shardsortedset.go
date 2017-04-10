@@ -11,7 +11,7 @@ type RedisShardSortedSet struct {
 	rp    *redis.Pool
 }
 
-func NewRedisSortedSet(key string, piece int, rp *redis.Pool) *RedisShardSortedSet {
+func NewRedisShardSortedSet(key string, piece int, rp *redis.Pool) *RedisShardSortedSet {
 	return &RedisShardSortedSet{
 		key:   key,
 		piece: piece,
