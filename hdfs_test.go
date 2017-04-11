@@ -24,3 +24,10 @@ func TestHDFSWrite(t *testing.T) {
 	utee.Chk(e)
 	log.Println("@value I Read is :", string(v))
 }
+
+func TestHDFSAppend(t *testing.T) {
+	hdfsClient := NewHDFSClient("", "")
+	fullPath := "/test7.txt"
+	err := hdfsClient.AppendFile(fullPath, []byte("append file\n"))
+	utee.Chk(err)
+}

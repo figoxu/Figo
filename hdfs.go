@@ -56,6 +56,19 @@ func (p *HDFSClient) Write(fullPath string, data []byte) error {
 	return err
 }
 
+func (p *HDFSClient) AppendFile(fullPath string, data []byte) error {
+	p.open()
+	defer p.close()
+	fullPath = FilePathFormat(fullPath)
+	w, err := p.client.Append(fullPath)
+	if err != nil {
+		return err
+	}
+	defer w.Close()
+	_, err = w.Write(data)
+	return err
+}
+
 func (p *HDFSClient) WriteFile(fullPath string, file *os.File) error {
 	p.open()
 	defer p.close()
