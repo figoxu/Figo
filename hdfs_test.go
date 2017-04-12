@@ -25,6 +25,13 @@ func TestHDFSWrite(t *testing.T) {
 	log.Println("@value I Read is :", string(v))
 }
 
+func TestHDFSCreateFile(t *testing.T) {
+	hdfsClient := NewHDFSClient("", "")
+	fullPath := "/test/test/push.txt"
+	err := hdfsClient.CreateFile(fullPath)
+	utee.Chk(err)
+}
+
 func TestHDFSAppend(t *testing.T) {
 	hdfsClient := NewHDFSClient("", "")
 	fullPath := "/test7.txt"
