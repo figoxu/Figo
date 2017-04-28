@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/astaxie/beego/orm"
 	"github.com/figoxu/color"
+	"github.com/jinzhu/copier"
 	"github.com/quexer/utee"
 	mgo "gopkg.in/mgo.v2"
 	"log"
@@ -23,12 +24,11 @@ func Catch() {
 	}
 }
 
-func Clone(src interface{}) interface{} {
-	if reflect.TypeOf(src).Kind().String() == "ptr" {
-		utee.Chk(errors.New("Can Not Clone An Point"))
+func Clone(to, from interface{}) {
+	if reflect.TypeOf(to).Kind().String() != "ptr" {
+		utee.Chk(errors.New("Parameter 'to' Should Be An PTR"))
 	}
-	dst := (src)
-	return dst
+	copier.Copy(to, from)
 }
 
 func Exist(expect interface{}, objs ...interface{}) bool {

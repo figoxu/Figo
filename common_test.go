@@ -51,9 +51,9 @@ func (p *CloneObj) display() {
 }
 
 func (p *CloneObj) AppendChild(objs []SubCloneObj) {
-	log.Println("===>")
+	fmt.Println("===>")
 	log.Println(p.Member)
-	log.Println("<===")
+	fmt.Println("<===")
 	p.Member = append(p.Member, objs...)
 }
 
@@ -85,19 +85,19 @@ func TestClone(t *testing.T) {
 		Year:     2016,
 		Member:   RandomCloneObjs(1),
 	}
-	obj2 := Clone(cloneObj).(CloneObj)
+	obj2 := CloneObj{}
+	Clone(&obj2, &cloneObj)
 	obj2.AppendChild(RandomCloneObjs(2))
 	obj2.Year = 2017
 
-	log.Println("===============")
+	fmt.Println("===============")
 	cloneObj.display()
-	log.Println("===============")
+	fmt.Println("===============")
 	obj2.display()
 
-	//	log.Println("1==>")
-	//	 Clone(&cloneObj)
-	//	log.Println("2==>")
-	Clone(cloneObj)
+	fmt.Println("===============")
+	Clone(&cloneObj, obj2)
+	cloneObj.display()
 }
 
 func TestExist(t *testing.T) {
