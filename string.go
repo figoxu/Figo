@@ -63,6 +63,21 @@ func TrimAndClear(strs ...string) []string {
 	return result
 }
 
+func ParserWithPipe(content string,ps ...Parser) []string{
+	exc:=func(parser Parser,contents ...string)[]string{
+		var result []string
+		for _,v:=range contents {
+			result = append(result,parser.Exe(v)...)
+		}
+		return result
+	}
+	result :=[]string{content}
+	for _,parser := range ps {
+		result = exc(parser,result...)
+	}
+	return result
+}
+
 func Md5ShardPiece(key string, piece int) int {
 	shardVal, err := strconv.ParseUint(utee.PlainMd5(key)[16:32], 16, 0)
 	utee.Chk(err)
