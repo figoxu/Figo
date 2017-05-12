@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"io"
+	"github.com/quexer/utee"
 )
 
 type FileUtee struct {
@@ -78,4 +80,30 @@ func (p *FileUtee) WriteLinesSlice(lines []string, path string) error {
 		fmt.Fprintln(w, line)
 	}
 	return w.Flush()
+}
+
+func (p *FileUtee) ReadAll(path string)string{
+	fi,err := os.Open(path)
+	utee.Chk(err)
+	defer fi.Close()
+	chunks := make([]byte,1024,1024)
+	buf := make([]byte,1024)
+	for{
+		n,err := fi.Read(buf)
+		if err != nil && err != io.EOF{panic(err)}
+		if 0 ==n {break}
+		chunks=append(chunks,buf[:n]...)
+	}
+	return string(chunks)
+}
+
+func (p *FileUtee) FlushWrite(path,content string)int{
+	f,err := os.OpenFile(path,os.O_TRUNC,0666)
+	if err!=nil{
+		f, err = os.Create(path)
+		utee.Chk(err)
+	}
+	n, err := io.WriteString(f, content)
+	utee.Chk(err)
+	return n
 }
