@@ -7,6 +7,13 @@ type RedisMutex struct {
 	resource string
 }
 
+func NewRedisMutex(rp *redis.Pool,resource string)*RedisMutex{
+	return &RedisMutex{
+		rp:rp,
+		resource:resource,
+	}
+}
+
 func (p *RedisMutex) Lock(ttlSec int) (bool, error) {
 	c := p.rp.Get()
 	defer c.Close()
