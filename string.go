@@ -107,6 +107,14 @@ func SnakeString(s string) string {
 	return strings.ToLower(string(data[:]))
 }
 
+func SnakeStrings(strs ...string) (result []string){
+	for _,str:=range strs {
+		s:=SnakeString(str)
+		result = append(result,s)
+	}
+	return result
+}
+
 // camel string, xx_yy to XxYy
 func CamelString(s string) string {
 	data := make([]byte, 0, len(s))
