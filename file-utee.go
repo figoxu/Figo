@@ -7,6 +7,7 @@ import (
 	"os"
 	"io"
 	"github.com/quexer/utee"
+	"io/ioutil"
 )
 
 type FileUtee struct {
@@ -106,4 +107,15 @@ func (p *FileUtee) FlushWrite(path,content string)int{
 	n, err := io.WriteString(f, content)
 	utee.Chk(err)
 	return n
+}
+
+func (p *FileUtee) FlushWriteBytes(path string,b []byte)int{
+	_,err := os.OpenFile(path,os.O_TRUNC,0666)
+	if err!=nil{
+		_, err = os.Create(path)
+		utee.Chk(err)
+	}
+	err = ioutil.WriteFile(path,b,0666)
+	utee.Chk(err)
+	return len(b)
 }
