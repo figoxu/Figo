@@ -99,14 +99,14 @@ func (p *FileUtee) ReadAll(path string)string{
 }
 
 func (p *FileUtee) FlushWrite(path,content string)int{
-	f,err := os.OpenFile(path,os.O_TRUNC,0666)
+	_,err := os.OpenFile(path,os.O_TRUNC,0666)
 	if err!=nil{
-		f, err = os.Create(path)
+		_, err = os.Create(path)
 		utee.Chk(err)
 	}
-	n, err := io.WriteString(f, content)
+	err = ioutil.WriteFile(path, []byte(content),0666)
 	utee.Chk(err)
-	return n
+	return len([]byte(content))
 }
 
 func (p *FileUtee) FlushWriteBytes(path string,b []byte)int{
