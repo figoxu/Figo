@@ -1,6 +1,7 @@
 package Figo
 
 import (
+	"github.com/quexer/utee"
 	"gopkg.in/mgo.v2"
 	"log"
 	"sync"
@@ -10,6 +11,12 @@ type MgoSe struct {
 	sync.Mutex
 	realSession  *mgo.Session
 	referSession *mgo.Session
+}
+
+func MgoConnect(db_connection string) *mgo.Session {
+	session, err := mgo.Dial(db_connection)
+	utee.Chk(err)
+	return session
 }
 
 func NewMgoSe(referSession *mgo.Session) *MgoSe {
