@@ -15,6 +15,6 @@ func NewGeoPoint(lat ,lng float64)GeoPoint{
 }
 
 func GeoDistance(from ,to GeoPoint)float64{
-	return geo.NewPoint(from.Lat, from.Lng).GreatCircleDistance(geo.NewPoint(to.Lat,to.Lng))
+	return geo.NewPoint(from.Lat, from.Lng).GreatCircleDistance(geo.NewPoint(to.Lat,to.Lng))*1000
 }
 
