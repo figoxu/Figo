@@ -63,17 +63,17 @@ func TrimAndClear(strs ...string) []string {
 	return result
 }
 
-func ParserWithPipe(content string,ps ...Parser) []string{
-	exc:=func(parser Parser,contents ...string)[]string{
+func ParserWithPipe(content string, ps ...Parser) []string {
+	exc := func(parser Parser, contents ...string) []string {
 		var result []string
-		for _,v:=range contents {
-			result = append(result,parser.Exe(v)...)
+		for _, v := range contents {
+			result = append(result, parser.Exe(v)...)
 		}
 		return result
 	}
-	result :=[]string{content}
-	for _,parser := range ps {
-		result = exc(parser,result...)
+	result := []string{content}
+	for _, parser := range ps {
+		result = exc(parser, result...)
 	}
 	return result
 }
@@ -107,10 +107,10 @@ func SnakeString(s string) string {
 	return strings.ToLower(string(data[:]))
 }
 
-func SnakeStrings(strs ...string) (result []string){
-	for _,str:=range strs {
-		s:=SnakeString(str)
-		result = append(result,s)
+func SnakeStrings(strs ...string) (result []string) {
+	for _, str := range strs {
+		s := SnakeString(str)
+		result = append(result, s)
 	}
 	return result
 }

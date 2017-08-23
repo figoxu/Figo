@@ -17,13 +17,13 @@ func NewRedisQueue(rp *redis.Pool, name string, concurrent int, worker func(stri
 	}
 	f := func() {
 		for {
-			v,err:=q.Deq()
-			if err!=nil && err!=redis.ErrNil {
-				worker(v,err)
-			}else if v==""{
+			v, err := q.Deq()
+			if err != nil && err != redis.ErrNil {
+				worker(v, err)
+			} else if v == "" {
 				time.Sleep(time.Second)
-			}else{
-				worker(v,err)
+			} else {
+				worker(v, err)
 			}
 		}
 	}

@@ -3,11 +3,11 @@ package Figo
 import (
 	"bufio"
 	"fmt"
+	"github.com/quexer/utee"
+	"io"
+	"io/ioutil"
 	"log"
 	"os"
-	"io"
-	"github.com/quexer/utee"
-	"io/ioutil"
 )
 
 type FileUtee struct {
@@ -83,39 +83,43 @@ func (p *FileUtee) WriteLinesSlice(lines []string, path string) error {
 	return w.Flush()
 }
 
-func (p *FileUtee) ReadAll(path string)string{
-	fi,err := os.Open(path)
+func (p *FileUtee) ReadAll(path string) string {
+	fi, err := os.Open(path)
 	utee.Chk(err)
 	defer fi.Close()
-	chunks := make([]byte,1024,1024)
-	buf := make([]byte,1024)
-	for{
-		n,err := fi.Read(buf)
-		if err != nil && err != io.EOF{panic(err)}
-		if 0 ==n {break}
-		chunks=append(chunks,buf[:n]...)
+	chunks := make([]byte, 1024, 1024)
+	buf := make([]byte, 1024)
+	for {
+		n, err := fi.Read(buf)
+		if err != nil && err != io.EOF {
+			panic(err)
+		}
+		if 0 == n {
+			break
+		}
+		chunks = append(chunks, buf[:n]...)
 	}
 	return string(chunks)
 }
 
-func (p *FileUtee) FlushWrite(path,content string)int{
-	_,err := os.OpenFile(path,os.O_TRUNC,0666)
-	if err!=nil{
+func (p *FileUtee) FlushWrite(path, content string) int {
+	_, err := os.OpenFile(path, os.O_TRUNC, 0666)
+	if err != nil {
 		_, err = os.Create(path)
 		utee.Chk(err)
 	}
-	err = ioutil.WriteFile(path, []byte(content),0666)
+	err = ioutil.WriteFile(path, []byte(content), 0666)
 	utee.Chk(err)
 	return len([]byte(content))
 }
 
-func (p *FileUtee) FlushWriteBytes(path string,b []byte)int{
-	_,err := os.OpenFile(path,os.O_TRUNC,0666)
-	if err!=nil{
+func (p *FileUtee) FlushWriteBytes(path string, b []byte) int {
+	_, err := os.OpenFile(path, os.O_TRUNC, 0666)
+	if err != nil {
 		_, err = os.Create(path)
 		utee.Chk(err)
 	}
-	err = ioutil.WriteFile(path,b,0666)
+	err = ioutil.WriteFile(path, b, 0666)
 	utee.Chk(err)
 	return len(b)
 }
