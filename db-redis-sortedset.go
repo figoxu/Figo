@@ -16,7 +16,7 @@ func NewRedisSortedSet(key string, rp *redis.Pool) *RedisSortedSet {
 	}
 }
 
-func (p *RedisSortedSet) ZAdd(score int, name string) {
+func (p *RedisSortedSet) ZAdd(score int64, name string) {
 	c := p.rp.Get()
 	defer c.Close()
 	c.Do("ZADD", p.key, score, name)
@@ -31,24 +31,33 @@ func (p *RedisSortedSet) ZBatchAdd(ssitems ...SSItem) {
 	c.Flush()
 }
 
-func (p *RedisSortedSet) ZScore(name string) int {
+func (p *RedisSortedSet) ZScore(name string) int64 {
 	c := p.rp.Get()
 	defer c.Close()
-	if score, err := redis.Int(c.Do("ZSCORE", p.key, name)); err == nil {
+	if score, err := redis.Int64(c.Do("ZSCORE", p.key, name)); err == nil {
 		return score
 	}
 	return 0
 }
 
-func (p *RedisSortedSet) ZCount(min, max int) int {
+func (p *RedisSortedSet) ZCount(min, max int64) int64 {
 	c := p.rp.Get()
 	defer c.Close()
-	count := func(key string) int {
-		if v, err := redis.Int(c.Do("ZCOUNT", key, min, max)); err == nil {
+	count := func(key string) int64 {
+		if v, err := redis.Int64(c.Do("ZCOUNT", key, min, max)); err == nil {
 			return v
 		}
 		return 0
 	}
 	total := count(p.key)
 	return total
+}
+
+func (p *RedisSortedSet) ZRangeByScore(min, max int64) []string {
+	c := p.rp.Get()
+	defer c.Close()
+	if skeys, err := redis.Strings(c.Do("ZRANGEBYSCORE", p.key, min, max)); err == nil {
+		return skeys
+	}
+	return []string{}
 }
