@@ -15,6 +15,7 @@ import (
 	"runtime/debug"
 	"strconv"
 	"strings"
+	"encoding/json"
 )
 
 func Catch() {
@@ -112,4 +113,11 @@ func Print(theme string, v ...interface{}) {
 func Println(theme string, v ...interface{}) {
 	s := fmt.Sprint(v...)
 	Print(theme, s, "\n")
+}
+
+func PrintJson(prefix string, v interface{}) {
+	if b, err := json.Marshal(v); err == nil {
+		Print(THEME_Magenta,prefix)
+		Print(THEME_Blue,string(b),"\n")
+	}
 }
