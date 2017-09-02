@@ -26,3 +26,17 @@ func TestByteHelp_I162B(t *testing.T) {
 	v=Bh.I162B(int16(256))
 	log.Println(Bh.BStr(v))
 }
+
+func TestByteHelp_ToHex(t *testing.T) {
+	bs:=Bh.Append([]byte{1})
+	v:=Bh.ToHex(bs)
+	bs2:=Bh.FromHex(v)
+	log.Println("@v:",v," @result:",bs2)
+
+	for i:=0;i<20;i++ {
+		bs=Bh.Append(bs,[]byte{byte(i)})
+		v:=Bh.ToHex(bs)
+		bs2:=Bh.FromHex(v)
+		log.Println("@v:",v," @result:",bs2)
+	}
+}

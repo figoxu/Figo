@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"log"
+	"strconv"
 )
 
 var Bh  = ByteHelp{}
@@ -44,11 +45,34 @@ func (p *ByteHelp) BStr(bs []byte)string{
 func (p *ByteHelp) Append(bss ...[]byte)[]byte {
 	out := []byte{}
 	for _,bs := range bss {
-
 		for _,b:=range bs{
-			log.Println(b)
 			out = append(out,b)
 		}
 	}
 	return out
+}
+
+func (p *ByteHelp) ToHex(bs []byte)string {
+	buffer := new(bytes.Buffer)
+	for _, b := range bs {
+		s := strconv.FormatInt(int64(b&0xff), 16)
+		if len(s) == 1 {
+			buffer.WriteString("0")
+		}
+		buffer.WriteString(s)
+	}
+	return buffer.String()
+}
+
+
+func (p *ByteHelp) FromHex(hex string)[]byte {
+	length := len(hex) / 2
+	slice := make([]byte, length)
+	rs := []rune(hex)
+	for i := 0; i < length; i++ {
+		s := string(rs[i*2 : i*2+2])
+		value, _ := strconv.ParseInt(s, 16, 10)
+		slice[i] = byte(value & 0xFF)
+	}
+	return slice
 }
