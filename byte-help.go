@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"log"
 	"strconv"
 )
 
@@ -20,12 +19,37 @@ func (p *ByteHelp) I162B(n int16) []byte {
 	return bytesBuffer.Bytes()
 }
 
-func (p *ByteHelp) B2I16(b []byte) int16 {
-	bytesBuffer := bytes.NewBuffer(b)
-	log.Println(b)
+func (p *ByteHelp) B2I16(bs []byte) int16 {
+	bytesBuffer := bytes.NewBuffer(bs)
 	var v int16
 	binary.Read(bytesBuffer, binary.BigEndian, &v)
-	return int16(v)
+	return v
+}
+
+func (p *ByteHelp) UI32ToB(n uint32) []byte {
+	bytesBuffer := bytes.NewBuffer([]byte{})
+	binary.Write(bytesBuffer, binary.BigEndian, &n)
+	return bytesBuffer.Bytes()
+}
+
+func (p *ByteHelp) BToUI32(bs []byte) uint32 {
+	bytesBuffer := bytes.NewBuffer(bs)
+	var v uint32
+	binary.Read(bytesBuffer, binary.BigEndian, &v)
+	return v
+}
+
+func (p *ByteHelp) UI16ToB(n uint16)[]byte{
+	bytesBuffer := bytes.NewBuffer([]byte{})
+	binary.Write(bytesBuffer, binary.BigEndian, &n)
+	return bytesBuffer.Bytes()
+}
+
+func (p *ByteHelp) BToUI16(bs []byte) uint16 {
+	bytesBuffer := bytes.NewBuffer(bs)
+	var v uint16
+	binary.Read(bytesBuffer, binary.BigEndian, &v)
+	return v
 }
 
 func (p *ByteHelp) BStr(bs []byte)string{

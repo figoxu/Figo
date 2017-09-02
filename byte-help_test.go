@@ -40,3 +40,10 @@ func TestByteHelp_ToHex(t *testing.T) {
 		log.Println("@v:",v," @result:",bs2)
 	}
 }
+
+func TestByteHelp_BToUI32(t *testing.T) {
+	v:=uint32(102345)
+	bs:=Bh.UI32ToB(v)
+	v2:=Bh.BToUI32(bs)
+	log.Println(v,"  to bytes :",bs," to uint32 :",v2)
+}
