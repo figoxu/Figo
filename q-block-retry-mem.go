@@ -12,7 +12,6 @@ type BlockChannelItem struct {
 	doneFlag bool
 	tryTimes int
 }
-// 需要仔细思考 doneFlag是否解决 异步乱序、导致重复执行的问题
 
 func (p *BlockChannelItem) timesIncr() {
 	p.tryTimes = p.tryTimes + 1
@@ -23,12 +22,11 @@ type BlockExecuteQ struct {
 	tc       *utee.TimerCache
 	seq      *SeqMem
 	tryTimes int
-	execute  func(interface{}, chan bool)
+	execute  func(interface{}) bool
 	mutex    sync.Mutex
 }
-// 使用mutex 避免 retry 和 blockExc 乱序执行
 
-func NewBlockExecuteQ(cap, retrySec, tryTimes int, exec func(interface{}, chan bool)) BlockExecuteQ {
+func NewBlockExecuteQ(cap, retrySec, tryTimes int, exec func(interface{})bool) BlockExecuteQ {
 	beq := BlockExecuteQ{
 		tryTimes: tryTimes,
 		execute:  exec,
@@ -50,8 +48,11 @@ func (p *BlockExecuteQ) retry(k, v interface{}) {
 	if task.tryTimes > p.tryTimes {
 		task.done <- false
 	} else if !task.doneFlag {
-		p.tc.Put(k, v)
-		p.execute(task.data, task.done)
+		if p.execute(task.data) {
+			task.done <- true
+		}else{
+			p.tc.Put(k, v)
+		}
 	}
 }
 
@@ -59,7 +60,9 @@ func (p *BlockExecuteQ) blockExec(v interface{}) {
 	task := v.(*BlockChannelItem)
 	p.tc.Put(task.k, task)
 	task.timesIncr()
-	p.execute(task.data, task.done)
+	if p.execute(task.data) {
+		task.done <- true
+	}
 	<-task.done
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
