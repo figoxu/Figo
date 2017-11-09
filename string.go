@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"encoding/json"
+	"github.com/oliveagle/jsonpath"
 )
 
 func SplitUTF8BOM(str string) string {
@@ -138,4 +140,13 @@ func CamelString(s string) string {
 		data = append(data, d)
 	}
 	return string(data[:])
+}
+
+func JsonPathParse(data,jsonPath string) interface{} {
+	var json_data interface{}
+	err := json.Unmarshal([]byte(data), &json_data)
+	utee.Chk(err)
+	v, err := jsonpath.JsonPathLookup(json_data, jsonPath)
+	utee.Chk(err)
+	return v
 }
