@@ -3,6 +3,7 @@ package Figo
 import (
 	"fmt"
 	"strconv"
+	"github.com/quexer/utee"
 )
 
 func TpInt(v interface{}) (int, error) {
@@ -43,6 +44,12 @@ func TpString(v interface{}) (string, error) {
 		return "", nil
 	}
 	return "", fmt.Errorf("unexpected type for String, got type %T", v)
+}
+
+func TpFloat64(v interface{}) (float64,error) {
+	s,err:=TpString(v)
+	utee.Chk(err)
+	return strconv.ParseFloat(s,64)
 }
 
 var ICast = InterfaceCast{}
