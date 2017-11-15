@@ -3,6 +3,7 @@ package Figo
 import (
 	"testing"
 	"log"
+	"time"
 )
 
 func TestByteHelp_Append(t *testing.T) {
@@ -46,4 +47,12 @@ func TestByteHelp_BToUI32(t *testing.T) {
 	bs:=Bh.UI32ToB(v)
 	v2:=Bh.BToUI32(bs)
 	log.Println(v,"  to bytes :",bs," to uint32 :",v2)
+}
+
+func TestByteHelp_I642B(t *testing.T) {
+	v:=time.Now().Unix()
+	bs := Bh.I642B(v)
+	log.Println(v)
+	log.Println(bs)
+	log.Println(Bh.B2I64(bs))
 }

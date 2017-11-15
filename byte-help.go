@@ -26,6 +26,19 @@ func (p *ByteHelp) B2I16(bs []byte) int16 {
 	return v
 }
 
+func (p *ByteHelp) I642B(n int64) []byte {
+	bytesBuffer := bytes.NewBuffer([]byte{})
+	binary.Write(bytesBuffer, binary.BigEndian, &n)
+	return bytesBuffer.Bytes()
+}
+
+func (p *ByteHelp) B2I64(bs []byte) int64 {
+	bytesBuffer := bytes.NewBuffer(bs)
+	var v int64
+	binary.Read(bytesBuffer, binary.BigEndian, &v)
+	return v
+}
+
 func (p *ByteHelp) UI32ToB(n uint32) []byte {
 	bytesBuffer := bytes.NewBuffer([]byte{})
 	binary.Write(bytesBuffer, binary.BigEndian, &n)
