@@ -17,7 +17,7 @@ func NewAesHelp(pwd []byte) AesHelp {
 	}
 }
 
-func (p *AesHelp) encrypt(origData []byte) ([]byte, error) {
+func (p *AesHelp) Encrypt(origData []byte) ([]byte, error) {
 	block, err := aes.NewCipher(p.pwd)
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func (p *AesHelp) encrypt(origData []byte) ([]byte, error) {
 	return crypted, nil
 }
 
-func (p *AesHelp) decrypt(crypted []byte) ([]byte, error) {
+func (p *AesHelp) Decrypt(crypted []byte) ([]byte, error) {
 	block, err := aes.NewCipher(p.pwd)
 	if err != nil {
 		return nil, err
