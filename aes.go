@@ -6,6 +6,7 @@ import (
 	"crypto/cipher"
 )
 
+//AES/CBC/PKCS5Padding
 type AesHelp struct {
 	pwd []byte
 }
