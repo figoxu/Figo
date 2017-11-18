@@ -1,24 +1,31 @@
 package Figo
 
 import (
-	"crypto/aes"
 	"bytes"
+	"crypto/aes"
 	"crypto/cipher"
 )
 
 //AES/CBC/PKCS5Padding
 type AesHelp struct {
-	pwd []byte
+	key []byte
+	iv  []byte
 }
 
-func NewAesHelp(pwd []byte) AesHelp {
+func NewAesHelp(keyParam []byte, ivParam ...byte) AesHelp {
+	key, iv := keyParam, keyParam
+	if len(ivParam) > 0 {
+		iv = ivParam
+	}
+
 	return AesHelp{
-		pwd: pwd,
+		key: key,
+		iv:  iv,
 	}
 }
 
 func (p *AesHelp) Encrypt(origData []byte) ([]byte, error) {
-	block, err := aes.NewCipher(p.pwd)
+	block, err := aes.NewCipher(p.key)
 	if err != nil {
 		return nil, err
 	}
@@ -29,19 +36,19 @@ func (p *AesHelp) Encrypt(origData []byte) ([]byte, error) {
 		return append(ciphertext, padtext...)
 	}
 	origData = PKCS5Padding(origData, blockSize)
-	blockMode := cipher.NewCBCEncrypter(block, p.pwd[:blockSize])
+	blockMode := cipher.NewCBCEncrypter(block, p.iv[:blockSize])
 	crypted := make([]byte, len(origData))
 	blockMode.CryptBlocks(crypted, origData)
 	return crypted, nil
 }
 
 func (p *AesHelp) Decrypt(crypted []byte) ([]byte, error) {
-	block, err := aes.NewCipher(p.pwd)
+	block, err := aes.NewCipher(p.key)
 	if err != nil {
 		return nil, err
 	}
 	blockSize := block.BlockSize()
-	blockMode := cipher.NewCBCDecrypter(block, p.pwd[:blockSize])
+	blockMode := cipher.NewCBCDecrypter(block, p.iv[:blockSize])
 	origData := make([]byte, len(crypted))
 	blockMode.CryptBlocks(origData, crypted)
 	PKCS5UnPadding := func(origData []byte) []byte {
