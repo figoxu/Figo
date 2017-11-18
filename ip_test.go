@@ -1,8 +1,8 @@
 package Figo
 
 import (
-	"testing"
 	"log"
+	"testing"
 )
 
 func TestIpHelp_FromBytes(t *testing.T) {

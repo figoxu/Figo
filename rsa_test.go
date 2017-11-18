@@ -1,9 +1,9 @@
 package Figo
 
 import (
-	"testing"
 	"github.com/quexer/utee"
 	"log"
+	"testing"
 )
 
 // 可通过openssl产生

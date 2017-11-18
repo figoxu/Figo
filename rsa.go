@@ -2,13 +2,13 @@ package Figo
 
 import (
 	"crypto"
-	"errors"
-	"crypto/rsa"
-	"encoding/pem"
-	"crypto/x509"
-	"github.com/quexer/utee"
 	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
+	"errors"
 	"fmt"
+	"github.com/quexer/utee"
 	"math/big"
 )
 

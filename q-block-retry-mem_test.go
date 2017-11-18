@@ -1,15 +1,15 @@
 package Figo
 
 import (
-	"testing"
+	"fmt"
 	"github.com/Pallinder/go-randomdata"
 	"log"
-	"fmt"
+	"testing"
 )
 
 func TestNewBlockExecuteQ(t *testing.T) {
 
-	bq := NewBlockExecuteQ(1000, 3, 3, func(v interface{})bool {
+	bq := NewBlockExecuteQ(1000, 3, 3, func(v interface{}) bool {
 		b := randomdata.Boolean()
 		if b {
 			log.Println("execute @v:", v, " SUCCESS")

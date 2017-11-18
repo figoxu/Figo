@@ -1,10 +1,10 @@
 package Figo
 
 import (
-	"testing"
-	"github.com/Pallinder/go-randomdata"
 	"fmt"
+	"github.com/Pallinder/go-randomdata"
 	"github.com/figoxu/flog"
+	"testing"
 )
 
 func TestNewMultiBlockExecuteQ(t *testing.T) {

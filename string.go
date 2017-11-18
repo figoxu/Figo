@@ -1,13 +1,13 @@
 package Figo
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/oliveagle/jsonpath"
 	"github.com/quexer/utee"
 	"regexp"
 	"strconv"
 	"strings"
-	"encoding/json"
-	"github.com/oliveagle/jsonpath"
 )
 
 func SplitUTF8BOM(str string) string {
@@ -142,7 +142,7 @@ func CamelString(s string) string {
 	return string(data[:])
 }
 
-func JsonPathParse(data,jsonPath string) interface{} {
+func JsonPathParse(data, jsonPath string) interface{} {
 	var json_data interface{}
 	err := json.Unmarshal([]byte(data), &json_data)
 	utee.Chk(err)

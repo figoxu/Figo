@@ -24,18 +24,18 @@ type MultiBlockExecuteQ struct {
 	tryTimes int
 	execute  func(interface{}) bool
 	mutex    sync.Mutex
-	qlock sync.Mutex
-	perCap int
+	qlock    sync.Mutex
+	perCap   int
 }
 
-func NewMultiBlockExecuteQ(perCap ,retrySec, tryTimes int, exec func(interface{}) bool) MultiBlockExecuteQ {
+func NewMultiBlockExecuteQ(perCap, retrySec, tryTimes int, exec func(interface{}) bool) MultiBlockExecuteQ {
 	beq := MultiBlockExecuteQ{
 		tryTimes: tryTimes,
 		execute:  exec,
 		seq:      NewSeqMem(),
 		mutex:    sync.Mutex{},
-		qlock:sync.Mutex{},
-		perCap:perCap,
+		qlock:    sync.Mutex{},
+		perCap:   perCap,
 	}
 	tc := utee.NewTimerCache(retrySec, beq.retry)
 	beq.mq = make(map[string]utee.MemQueue)
@@ -76,13 +76,13 @@ func (p *MultiBlockExecuteQ) blockExec(v interface{}) {
 func (p *MultiBlockExecuteQ) getQ(prefix string) utee.MemQueue {
 	p.qlock.Lock()
 	defer p.qlock.Unlock()
-	if q:=p.mq[prefix];q==nil {
-		p.mq[prefix]=utee.NewLeakMemQueue(p.perCap, 1, p.blockExec)
+	if q := p.mq[prefix]; q == nil {
+		p.mq[prefix] = utee.NewLeakMemQueue(p.perCap, 1, p.blockExec)
 	}
 	return p.mq[prefix]
 }
 
-func (p *MultiBlockExecuteQ) Enq(prefix string ,v interface{}) {
+func (p *MultiBlockExecuteQ) Enq(prefix string, v interface{}) {
 	k := p.seq.Next()
 	item := &MultiBlockChannelItem{
 		k:        k,

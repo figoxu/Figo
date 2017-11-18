@@ -1,14 +1,12 @@
 package Figo
 
 import (
-	"log"
 	"github.com/jinzhu/gorm"
+	"log"
 )
 
 type GormLog struct {
-
 }
-
 
 // @index: 0    @value: sql
 // @index: 1    @value: /Users/xujianhui/GoglandProjects/sdz-stock-service/dao/db-CampSite.go:117
@@ -19,5 +17,3 @@ type GormLog struct {
 func (p *GormLog) Print(values ...interface{}) {
 	log.Println(gorm.LogFormatter(values...)...)
 }
-
-

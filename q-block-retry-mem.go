@@ -1,8 +1,8 @@
 package Figo
 
 import (
-	"sync"
 	"github.com/quexer/utee"
+	"sync"
 )
 
 type BlockChannelItem struct {
@@ -26,7 +26,7 @@ type BlockExecuteQ struct {
 	mutex    sync.Mutex
 }
 
-func NewBlockExecuteQ(cap, retrySec, tryTimes int, exec func(interface{})bool) BlockExecuteQ {
+func NewBlockExecuteQ(cap, retrySec, tryTimes int, exec func(interface{}) bool) BlockExecuteQ {
 	beq := BlockExecuteQ{
 		tryTimes: tryTimes,
 		execute:  exec,
@@ -50,7 +50,7 @@ func (p *BlockExecuteQ) retry(k, v interface{}) {
 	} else if !task.doneFlag {
 		if p.execute(task.data) {
 			task.done <- true
-		}else{
+		} else {
 			p.tc.Put(k, v)
 		}
 	}

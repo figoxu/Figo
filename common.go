@@ -2,6 +2,7 @@ package Figo
 
 import (
 	"bufio"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/astaxie/beego/orm"
@@ -15,7 +16,6 @@ import (
 	"runtime/debug"
 	"strconv"
 	"strings"
-	"encoding/json"
 )
 
 func Catch() {
@@ -117,7 +117,7 @@ func Println(theme string, v ...interface{}) {
 
 func PrintJson(prefix string, v interface{}) {
 	if b, err := json.Marshal(v); err == nil {
-		Print(THEME_Magenta,prefix)
-		Print(THEME_Blue,string(b),"\n")
+		Print(THEME_Magenta, prefix)
+		Print(THEME_Blue, string(b), "\n")
 	}
 }

@@ -7,10 +7,9 @@ import (
 	"strconv"
 )
 
-var Bh  = ByteHelp{}
+var Bh = ByteHelp{}
 
 type ByteHelp struct {
-
 }
 
 func (p *ByteHelp) I162B(n int16) []byte {
@@ -52,7 +51,7 @@ func (p *ByteHelp) BToUI32(bs []byte) uint32 {
 	return v
 }
 
-func (p *ByteHelp) UI16ToB(n uint16)[]byte{
+func (p *ByteHelp) UI16ToB(n uint16) []byte {
 	bytesBuffer := bytes.NewBuffer([]byte{})
 	binary.Write(bytesBuffer, binary.BigEndian, &n)
 	return bytesBuffer.Bytes()
@@ -65,31 +64,31 @@ func (p *ByteHelp) BToUI16(bs []byte) uint16 {
 	return v
 }
 
-func (p *ByteHelp) BStr(bs []byte)string{
-	v:=""
-	for  _,b :=range bs  {
-		s:=fmt.Sprint(uint8(b))
-		if len(s)<2{
-			s=fmt.Sprint("00",s)
-		}else if len(s)<3{
-			s=fmt.Sprint("0",s)
+func (p *ByteHelp) BStr(bs []byte) string {
+	v := ""
+	for _, b := range bs {
+		s := fmt.Sprint(uint8(b))
+		if len(s) < 2 {
+			s = fmt.Sprint("00", s)
+		} else if len(s) < 3 {
+			s = fmt.Sprint("0", s)
 		}
-		v = fmt.Sprint(v," ",s)
+		v = fmt.Sprint(v, " ", s)
 	}
 	return v
 }
 
-func (p *ByteHelp) Append(bss ...[]byte)[]byte {
+func (p *ByteHelp) Append(bss ...[]byte) []byte {
 	out := []byte{}
-	for _,bs := range bss {
-		for _,b:=range bs{
-			out = append(out,b)
+	for _, bs := range bss {
+		for _, b := range bs {
+			out = append(out, b)
 		}
 	}
 	return out
 }
 
-func (p *ByteHelp) ToHex(bs []byte)string {
+func (p *ByteHelp) ToHex(bs []byte) string {
 	buffer := new(bytes.Buffer)
 	for _, b := range bs {
 		s := strconv.FormatInt(int64(b&0xff), 16)
@@ -101,8 +100,7 @@ func (p *ByteHelp) ToHex(bs []byte)string {
 	return buffer.String()
 }
 
-
-func (p *ByteHelp) FromHex(hex string)[]byte {
+func (p *ByteHelp) FromHex(hex string) []byte {
 	length := len(hex) / 2
 	slice := make([]byte, length)
 	rs := []rune(hex)
