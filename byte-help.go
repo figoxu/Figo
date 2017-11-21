@@ -12,6 +12,18 @@ var Bh = ByteHelp{}
 type ByteHelp struct {
 }
 
+func (p *ByteHelp) Equal(bs1 ,bs2 []byte) bool {
+	if len(bs1)!=len(bs2){
+		return false
+	}
+	for index,v := range bs1 {
+		if bs2[index]!=v {
+			return false
+		}
+	}
+	return true
+}
+
 func (p *ByteHelp) I162B(n int16) []byte {
 	bytesBuffer := bytes.NewBuffer([]byte{})
 	binary.Write(bytesBuffer, binary.BigEndian, &n)
