@@ -18,10 +18,13 @@ import (
 	"strings"
 )
 
-func Catch() {
+func Catch(hooks ...func()) {
 	if err := recover(); err != nil {
 		log.Println(string(debug.Stack()))
 		log.Println(err, " (recover)")
+		for _,hook:=range hooks {
+			hook()
+		}
 	}
 }
 
