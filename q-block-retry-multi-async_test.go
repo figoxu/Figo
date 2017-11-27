@@ -23,6 +23,14 @@ func TestNewMultiAsyncBlockExecuteQ(t *testing.T) {
 			lg.Info("execute @v:", item.i, " FAILURE")
 		}
 		bmq.Hook(item.k,b)
+	},func(v interface{},workFlag bool){
+		item := v.(QItem)
+		var lg = flog.GetLog(item.k)
+		statusString :="FAILURE"
+		if workFlag {
+			statusString="SUCCESS"
+		}
+		lg.Info(">>>> result execute @v:", item.i, " ",statusString)
 	})
 
 	mockInput := func(prefix string) {

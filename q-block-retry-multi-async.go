@@ -4,6 +4,7 @@ import (
 	"github.com/quexer/utee"
 	"sync"
 	"log"
+	"time"
 )
 
 type MultiAsyncBlockExecuteQ struct {
@@ -39,11 +40,10 @@ func NewMultiAsyncBlockExecuteQ(perCap, retrySec, tryTimes int, exec func(data i
 
 func (p *MultiAsyncBlockExecuteQ) retry(k, v interface{}) {
 	task := v.(*MultiBlockChannelItem)
-	c := p.getC(task.prefix)
 	task.timesIncr()
 	if task.tryTimes > p.tryTimes {
-		c <- false
 		p.tc.Remove(task.k)
+		p.getC(task.prefix) <- false
 		return
 	}
 	if !task.doneFlag {
@@ -57,7 +57,7 @@ func (p *MultiAsyncBlockExecuteQ) blockExec(v interface{}) {
 	ch := p.getC(task.prefix)
 	clearDirtyHookData := func() {
 		for len(ch) > 0 {
-			log.Println("Clear Dirty Hook Data @prefix:", task.prefix)
+			log.Println("clearDirtyHook >>>  @prefix:",task.prefix," @len:",len(ch))
 			<-ch
 		}
 	}
@@ -66,10 +66,23 @@ func (p *MultiAsyncBlockExecuteQ) blockExec(v interface{}) {
 	task.timesIncr()
 	p.execute(task.data)
 	workFlag:=<-ch
-	if p.callback != nil {
-		go p.callback(v,workFlag)
-	}
 	task.doneFlag = true
+	p.tc.Remove(task.k)
+	mergeMuliResult := func(){
+		for len(ch) > 0 {
+			if !workFlag {
+				workFlag=<-ch
+			}else{
+				<-ch
+			}
+			log.Println("merge >>>  @prefix:",task.prefix," @len:",len(ch),"@workFlag:",workFlag)
+		}
+	}
+	time.Sleep(time.Nanosecond*time.Duration(17))
+	mergeMuliResult()
+	if p.callback != nil {
+		p.callback(task.data,workFlag)
+	}
 }
 
 func (p *MultiAsyncBlockExecuteQ) getQ(prefix string) utee.MemQueue {
@@ -90,7 +103,6 @@ func (p *MultiAsyncBlockExecuteQ) getC(prefix string) chan bool {
 	if c := p.mc[prefix]; c != nil {
 		return c
 	} else {
-		log.Println("@new Channel @prefix:", prefix)
 		const WAY4Hook = 2
 		p.mc[prefix] = make(chan bool, WAY4Hook)
 	}
