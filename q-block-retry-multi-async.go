@@ -13,17 +13,19 @@ type MultiAsyncBlockExecuteQ struct {
 	seq      *SeqMem
 	trySecs  int
 	tryTimes int
-	execute  func(interface{})
+	execute  func(data interface{})
+	callback func(data interface{}, workFlag bool)
 	qlock    sync.Mutex
 	clock    sync.Mutex
 	perCap   int
 }
 
-func NewMultiAsyncBlockExecuteQ(perCap, retrySec, tryTimes int, exec func(v interface{})) MultiAsyncBlockExecuteQ {
+func NewMultiAsyncBlockExecuteQ(perCap, retrySec, tryTimes int, exec func(data interface{}), callback func(data interface{}, workFlag bool)) MultiAsyncBlockExecuteQ {
 	beq := MultiAsyncBlockExecuteQ{
 		tryTimes: tryTimes,
 		trySecs:  tryTimes,
 		execute:  exec,
+		callback: callback,
 		seq:      NewSeqMem(),
 		qlock:    sync.Mutex{},
 		clock:    sync.Mutex{},
@@ -52,10 +54,10 @@ func (p *MultiAsyncBlockExecuteQ) retry(k, v interface{}) {
 
 func (p *MultiAsyncBlockExecuteQ) blockExec(v interface{}) {
 	task := v.(*MultiBlockChannelItem)
-	ch:=p.getC(task.prefix)
-	clearDirtyHookData :=func (){
-		for len(ch)>0 {
-			log.Println("Clear Dirty Hook Data @prefix:",task.prefix)
+	ch := p.getC(task.prefix)
+	clearDirtyHookData := func() {
+		for len(ch) > 0 {
+			log.Println("Clear Dirty Hook Data @prefix:", task.prefix)
 			<-ch
 		}
 	}
@@ -63,8 +65,10 @@ func (p *MultiAsyncBlockExecuteQ) blockExec(v interface{}) {
 	p.tc.Put(task.k, task)
 	task.timesIncr()
 	p.execute(task.data)
-
-	<-ch
+	workFlag:=<-ch
+	if p.callback != nil {
+		go p.callback(v,workFlag)
+	}
 	task.doneFlag = true
 }
 
@@ -77,7 +81,6 @@ func (p *MultiAsyncBlockExecuteQ) getQ(prefix string) utee.MemQueue {
 	return p.mq[prefix]
 }
 
-
 func (p *MultiAsyncBlockExecuteQ) getC(prefix string) chan bool {
 	if c := p.mc[prefix]; c != nil {
 		return c
@@ -86,7 +89,7 @@ func (p *MultiAsyncBlockExecuteQ) getC(prefix string) chan bool {
 	defer p.clock.Unlock()
 	if c := p.mc[prefix]; c != nil {
 		return c
-	}else{
+	} else {
 		log.Println("@new Channel @prefix:", prefix)
 		const WAY4Hook = 2
 		p.mc[prefix] = make(chan bool, WAY4Hook)
