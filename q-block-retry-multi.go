@@ -11,6 +11,7 @@ type MultiBlockChannelItem struct {
 	done     chan bool
 	doneFlag bool
 	tryTimes int
+	prefix   string
 }
 
 func (p *MultiBlockChannelItem) timesIncr() {
@@ -23,7 +24,6 @@ type MultiBlockExecuteQ struct {
 	seq      *SeqMem
 	tryTimes int
 	execute  func(interface{}) bool
-	mutex    sync.Mutex
 	qlock    sync.Mutex
 	perCap   int
 }
@@ -33,7 +33,6 @@ func NewMultiBlockExecuteQ(perCap, retrySec, tryTimes int, exec func(interface{}
 		tryTimes: tryTimes,
 		execute:  exec,
 		seq:      NewSeqMem(),
-		mutex:    sync.Mutex{},
 		qlock:    sync.Mutex{},
 		perCap:   perCap,
 	}
@@ -44,8 +43,6 @@ func NewMultiBlockExecuteQ(perCap, retrySec, tryTimes int, exec func(interface{}
 }
 
 func (p *MultiBlockExecuteQ) retry(k, v interface{}) {
-	p.mutex.Lock()
-	defer p.mutex.Unlock()
 	task := v.(*MultiBlockChannelItem)
 	task.timesIncr()
 	if task.tryTimes > p.tryTimes {
@@ -67,8 +64,6 @@ func (p *MultiBlockExecuteQ) blockExec(v interface{}) {
 		task.done <- true
 	}
 	<-task.done
-	p.mutex.Lock()
-	defer p.mutex.Unlock()
 	task.doneFlag = true
 	p.tc.Remove(task.k)
 }
@@ -90,6 +85,7 @@ func (p *MultiBlockExecuteQ) Enq(prefix string, v interface{}) {
 		done:     make(chan bool, 1),
 		tryTimes: 0,
 		doneFlag: false,
+		prefix:   prefix,
 	}
 	p.getQ(prefix).Enq(item)
 }
