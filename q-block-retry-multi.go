@@ -18,6 +18,10 @@ func (p *MultiBlockChannelItem) timesIncr() {
 	p.tryTimes = p.tryTimes + 1
 }
 
+func (p *MultiBlockChannelItem) GetData() interface{}{
+	return p.data
+}
+
 type MultiBlockExecuteQ struct {
 	mq       map[string]utee.MemQueue
 	tc       *utee.TimerCache

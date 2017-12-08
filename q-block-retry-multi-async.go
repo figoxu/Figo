@@ -122,6 +122,19 @@ func (p *MultiAsyncBlockExecuteQ) Enq(prefix string, v interface{}) {
 	p.getQ(prefix).Enq(item)
 }
 
+func (p *MultiAsyncBlockExecuteQ) Deq(prefix string, filter func(item *MultiBlockChannelItem)bool) chan *MultiBlockChannelItem {
+	mq:=p.getQ(prefix)
+	items:=mq.DeqN(mq.Len())
+	c:=make(chan *MultiBlockChannelItem,mq.Len()+1)
+	for _,item:=range items {
+		v:=item.(*MultiBlockChannelItem)
+		if filter(v) {
+			c<-v
+		}
+	}
+	return c
+}
+
 func (p *MultiAsyncBlockExecuteQ) Hook(prefix string, status bool) {
 	if status {
 		p.getC(prefix) <- status
