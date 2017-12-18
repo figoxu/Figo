@@ -150,3 +150,25 @@ func JsonPathParse(data, jsonPath string) interface{} {
 	utee.Chk(err)
 	return v
 }
+
+func FillPrefix(v,fillChar string,resultLen int) string{
+	if len(v)>resultLen || len(fillChar)<=0{
+		return v
+	}
+	blank,result:=fillChar[0:1],v
+	for i:=0;i<resultLen-len(v);i++ {
+		result = fmt.Sprint(blank,result)
+	}
+	return result
+}
+
+func FillSuffix(v,fillChar string,resultLen int) string{
+	if len(v)>resultLen || len(fillChar)<=0{
+		return v
+	}
+	blank,result:=fillChar[0:1],v
+	for i:=0;i<resultLen-len(v);i++ {
+		result = fmt.Sprint(result,blank)
+	}
+	return result
+}
