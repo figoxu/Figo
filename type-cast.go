@@ -34,6 +34,18 @@ func TpInt64(v interface{}) (int64, error) {
 	}
 }
 
+func TpUint64(v interface{}) (uint64, error) {
+	switch reply := v.(type) {
+	case uint64:
+		return reply, nil
+	case []byte:
+		n, err := strconv.ParseUint(string(reply), 10, 64)
+		return n, err
+	default:
+		return strconv.ParseUint(fmt.Sprint(reply), 10, 64)
+	}
+}
+
 func TpString(v interface{}) (string, error) {
 	switch reply := v.(type) {
 	case []byte:
