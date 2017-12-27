@@ -53,6 +53,9 @@ func (p *BothWayMap) DeleteKey(key interface{}) *BothWayMap {
 	if exists {
 		delete(p.ab, key)
 		delete(p.ba, value)
+		if p.ttl != nil {
+			p.ttl.Remove(key)
+		}
 	}
 	return p
 }
@@ -62,6 +65,9 @@ func (p *BothWayMap) DeleteValue(value interface{}) *BothWayMap {
 	if exists {
 		delete(p.ab, key)
 		delete(p.ba, value)
+		if p.ttl != nil {
+			p.ttl.Remove(key)
+		}
 	}
 	return p
 }
