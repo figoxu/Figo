@@ -5,10 +5,20 @@ import (
 	"time"
 )
 
-func T_SubDays(fromTime, toTime time.Time) int {
-	if toTime.Location().String() != fromTime.Location().String() {
-		return -1
+var local *time.Location
+
+
+func init() {
+	local, _ = time.LoadLocation("Asia/Shanghai")
+}
+
+func T_SubDays(fromTime, toTime time.Time,tzs... *time.Location) int {
+	tz := local
+	if len(tzs) >0 {
+		tz = tzs[0]
 	}
+	toTime = toTime.In(tz)
+	fromTime = fromTime.In(tz)
 	if hours := toTime.Sub(fromTime).Hours(); hours <= 0 {
 		return -1
 	} else if hours < 24 {
