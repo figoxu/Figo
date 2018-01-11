@@ -47,3 +47,23 @@ func TestRedisBitmap(t *testing.T) {
 	err = RedisBitop(rp, "and", "dest1", "FOO", "FOO1", "FOO2")
 	log.Println("bitop and ", "err", err)
 }
+
+
+func Test_r_Rpush(t *testing.T){
+	rp := RedisPool("localhost:6379", "")
+	k := "figo"
+	RedisRpush(rp, k,"hello")
+	RedisRpush(rp, k,"world")
+	RedisRpush(rp, k,"how")
+	RedisRpush(rp, k,"r")
+	RedisRpush(rp, k,"u")
+	log.Println(RedisLlen(rp, k))
+	v,err:=RedisLpop(rp, k)
+	utee.Chk(err)
+	log.Println(v)
+	l,err:=RedisLlen(rp, k)
+	log.Println("@len:",l)
+	for i:=0;i<l;i++ {
+		log.Println(RedisLindex(rp,k,i))
+	}
+}

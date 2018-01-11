@@ -86,3 +86,30 @@ func RedisBitop(rp *redis.Pool, tp string, destkey interface{}, key ...interface
 	}
 	return c.Send("bitop", keys...)
 }
+
+
+func RedisRpush(rp *redis.Pool, k, v string) error {
+	c := rp.Get()
+	defer c.Close()
+	_, err := c.Do("RPUSH", k, v)
+	return err
+}
+
+func RedisLpop(rp *redis.Pool, k string) (v string,err error) {
+	c := rp.Get()
+	defer c.Close()
+	return redis.String(c.Do("LPOP", k))
+}
+
+func RedisLlen(rp *redis.Pool, k string) (int,error) {
+	c := rp.Get()
+	defer c.Close()
+
+	return redis.Int(c.Do("LLEN",k))
+}
+
+func RedisLindex(rp *redis.Pool, k string,index int) (v string,err error){
+	c := rp.Get()
+	defer c.Close()
+	return redis.String(c.Do("LINDEX",k,index))
+}
