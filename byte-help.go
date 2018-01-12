@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 var Bh = ByteHelp{}
@@ -12,12 +13,12 @@ var Bh = ByteHelp{}
 type ByteHelp struct {
 }
 
-func (p *ByteHelp) Equal(bs1 ,bs2 []byte) bool {
-	if len(bs1)!=len(bs2){
+func (p *ByteHelp) Equal(bs1, bs2 []byte) bool {
+	if len(bs1) != len(bs2) {
 		return false
 	}
-	for index,v := range bs1 {
-		if bs2[index]!=v {
+	for index, v := range bs1 {
+		if bs2[index] != v {
 			return false
 		}
 	}
@@ -103,6 +104,22 @@ func (p *ByteHelp) BStr(bs []byte) string {
 	return v
 }
 
+func (p *ByteHelp) FromBstr(bstr string) ([]byte, error) {
+	vs := strings.Split(bstr, " ")
+	bs := make([]byte, 0)
+	for _, v := range vs {
+		if v == "" {
+			continue
+		}
+		i, err := TpInt(v)
+		if err != nil {
+			return bs, err
+		}
+		bs = append(bs, byte(i))
+	}
+	return bs, nil
+}
+
 func (p *ByteHelp) Append(bss ...[]byte) []byte {
 	out := []byte{}
 	for _, bs := range bss {
@@ -130,7 +147,7 @@ func (p *ByteHelp) FromHex(hex string) []byte {
 	slice := make([]byte, length)
 	rs := []rune(hex)
 	for i := 0; i < length; i++ {
-		s := string(rs[i*2 : i*2+2])
+		s := string(rs[i*2: i*2+2])
 		value, _ := strconv.ParseInt(s, 16, 10)
 		slice[i] = byte(value & 0xFF)
 	}

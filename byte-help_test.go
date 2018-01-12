@@ -4,6 +4,7 @@ import (
 	"log"
 	"testing"
 	"time"
+	"github.com/quexer/utee"
 )
 
 func TestByteHelp_Append(t *testing.T) {
@@ -11,6 +12,17 @@ func TestByteHelp_Append(t *testing.T) {
 	log.Println(bs)
 	str := Bh.BStr(bs)
 	log.Println(str)
+}
+
+func TestByteHelp_FromBstr(t *testing.T) {
+	bs := Bh.Append([]byte{1, 2, 3, 4, 5}, []byte{6, 7, 8}, []byte{9, 10, 11, 12, 13})
+	str := Bh.BStr(bs)
+	log.Println("ByteString:",str)
+	bs,err:=Bh.FromBstr(str)
+	utee.Chk(err)
+	for _,b := range bs {
+		log.Println(b)
+	}
 }
 
 func TestByteHelp_B2I16(t *testing.T) {
