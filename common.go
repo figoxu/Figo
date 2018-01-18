@@ -124,3 +124,11 @@ func PrintJson(prefix string, v interface{}) {
 		Print(THEME_Blue, string(b), "\n")
 	}
 }
+
+func JsonString(obj interface{}) string {
+	b, _ := json.Marshal(obj)
+	s := fmt.Sprintf("%+v", string(b))
+	r := strings.Replace(s, `\u003c`, "<", -1)
+	r = strings.Replace(r, `\u003e`, ">", -1)
+	return r
+}
