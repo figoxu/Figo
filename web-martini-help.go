@@ -145,9 +145,12 @@ func form_func_IntArray(r *http.Request) func(name, separate string) []int {
 		svs := strings.Split(sv, separate)
 		ivs := make([]int, 0)
 		for _, v := range svs {
-			iv, err := strconv.ParseInt(v, 10, 32)
-			utee.Chk(err)
-			ivs = append(ivs, int(iv))
+			if v == "" {
+				continue
+			}
+			if iv, err := strconv.ParseInt(v, 10, 32);err!=nil {
+				ivs = append(ivs, int(iv))
+			}
 		}
 		return ivs
 	}
