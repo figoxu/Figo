@@ -1,6 +1,5 @@
 package Figo
 
-
 import (
 	"github.com/go-martini/martini"
 	"log"
@@ -14,10 +13,11 @@ import (
 type ParamHelper struct {
 	Float64 func(name string) float64
 	Bool    func(name string) bool
-	Int     func(name string,defaultVs ...int) int
+	Int     func(name string, defaultVs ...int) int
 	Int64   func(name string) int64
 	Time    func(name, format string) time.Time
 	String  func(name string) string
+	IntArr  func(name, separate string) []int
 }
 
 func Mid_helper_param(c martini.Context, param martini.Params, w http.ResponseWriter) {
@@ -32,9 +32,9 @@ func Mid_helper_param(c martini.Context, param martini.Params, w http.ResponseWr
 }
 
 type FormHelper struct {
-	Int     func(name string,defaultVs ...int) int
+	Int     func(name string, defaultVs ...int) int
 	Int64   func(name string) int64
-	Float32 func(name string,defaultVs ...float32) float32
+	Float32 func(name string, defaultVs ...float32) float32
 	String  func(name string) string
 	StrArr  func(name, separate string) []string
 	IntArr  func(name, separate string) []int
@@ -50,7 +50,6 @@ func Mid_helper_form(c martini.Context, r *http.Request) {
 		IntArr:  form_func_IntArray(r),
 	})
 }
-
 
 func wp_func_string(param martini.Params) func(name string) string {
 	return func(name string) string {
@@ -76,11 +75,11 @@ func wp_func_Bool(param martini.Params) func(name string) bool {
 	}
 }
 
-func wp_func_Int(param martini.Params) func(name string,defaultVs ...int) int {
-	return func(name string,defaultVs ...int) int {
+func wp_func_Int(param martini.Params) func(name string, defaultVs ...int) int {
+	return func(name string, defaultVs ...int) int {
 		log.Println("wp_func_Int  ", name, " @val: ", param[name])
 		v, err := strconv.ParseInt(param[name], 10, 32)
-		if err!=nil && len(defaultVs)>0 {
+		if err != nil && len(defaultVs) > 0 {
 			return defaultVs[0]
 		}
 		utee.Chk(err)
@@ -105,11 +104,28 @@ func wp_func_time(param martini.Params) func(name, format string) time.Time {
 	}
 }
 
-func form_func_Int(r *http.Request) func(name string,defaultVs ...int) int {
-	return func(name string,defaultVs ...int) int {
+func wp_func_IntArray(param martini.Params) func(name, separate string) []int {
+	return func(name, separate string) []int {
+		sv := strings.TrimSpace(param[name])
+		svs := strings.Split(sv, separate)
+		ivs := make([]int, 0)
+		for _, v := range svs {
+			if v == "" {
+				continue
+			}
+			if iv, err := strconv.ParseInt(v, 10, 32); err != nil {
+				ivs = append(ivs, int(iv))
+			}
+		}
+		return ivs
+	}
+}
+
+func form_func_Int(r *http.Request) func(name string, defaultVs ...int) int {
+	return func(name string, defaultVs ...int) int {
 		sv := strings.TrimSpace(r.PostFormValue(name))
 		v, err := strconv.ParseInt(sv, 10, 32)
-		if err!=nil && len(defaultVs)>0 {
+		if err != nil && len(defaultVs) > 0 {
 			return defaultVs[0]
 		}
 		utee.Chk(err)
@@ -148,7 +164,7 @@ func form_func_IntArray(r *http.Request) func(name, separate string) []int {
 			if v == "" {
 				continue
 			}
-			if iv, err := strconv.ParseInt(v, 10, 32);err!=nil {
+			if iv, err := strconv.ParseInt(v, 10, 32); err != nil {
 				ivs = append(ivs, int(iv))
 			}
 		}
@@ -156,11 +172,11 @@ func form_func_IntArray(r *http.Request) func(name, separate string) []int {
 	}
 }
 
-func form_func_Float32(r *http.Request) func(name string,defaultVs ...float32) float32 {
-	return func(name string,defaultVs ...float32) float32 {
+func form_func_Float32(r *http.Request) func(name string, defaultVs ...float32) float32 {
+	return func(name string, defaultVs ...float32) float32 {
 		sv := strings.TrimSpace(r.PostFormValue(name))
 		v, err := strconv.ParseFloat(sv, 32)
-		if err!=nil && len(defaultVs)>0 {
+		if err != nil && len(defaultVs) > 0 {
 			return defaultVs[0]
 		}
 		utee.Chk(err)

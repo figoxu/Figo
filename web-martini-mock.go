@@ -1,12 +1,12 @@
 package Figo
 
-
 import (
 	"github.com/go-martini/martini"
 	"log"
 	"net/http"
 	"net/url"
 )
+
 type HttpHelperMockBuilder struct {
 	dataMock map[string]string
 }
@@ -30,6 +30,7 @@ func (p *HttpHelperMockBuilder) ParamHelper() ParamHelper {
 		Int:     wp_func_Int(m),
 		Time:    wp_func_time(m),
 		String:  wp_func_string(m),
+		IntArr:  wp_func_IntArray(m),
 	}
 }
 
