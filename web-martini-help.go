@@ -15,6 +15,7 @@ type ParamHelper struct {
 	Bool    func(name string) bool
 	Int     func(name string, defaultVs ...int) int
 	Int64   func(name string) int64
+	Uint64  func(name string) uint64
 	Time    func(name, format string) time.Time
 	String  func(name string) string
 	IntArr  func(name, separate string) []int
@@ -26,6 +27,7 @@ func Mid_helper_param(c martini.Context, param martini.Params, w http.ResponseWr
 		Bool:    wp_func_Bool(param),
 		Int:     wp_func_Int(param),
 		Int64:   wp_func_Int64(param),
+		Uint64:  wp_func_Uint64(param),
 		Time:    wp_func_time(param),
 		String:  wp_func_string(param),
 	})
@@ -90,6 +92,14 @@ func wp_func_Int(param martini.Params) func(name string, defaultVs ...int) int {
 func wp_func_Int64(param martini.Params) func(name string) int64 {
 	return func(name string) int64 {
 		v, err := strconv.ParseInt(param[name], 10, 32)
+		utee.Chk(err)
+		return v
+	}
+}
+
+func wp_func_Uint64(param martini.Params) func(name string) uint64 {
+	return func(name string) uint64 {
+		v, err := TpUint64(param[name])
 		utee.Chk(err)
 		return v
 	}
