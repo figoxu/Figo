@@ -73,7 +73,12 @@ func (p *FileUtee) ReadLinesSlice(path string) ([]string, error) {
 func (p *FileUtee) WriteLinesSlice(lines []string, path string) error {
 	file, err := os.OpenFile(path, os.O_RDWR|os.O_APPEND, 0660)
 	if err != nil {
-		return err
+		if !p.Exist("./test.txt"){
+			file,err=p.MakeFile("./","test.txt")
+			if err!=nil {
+				return err
+			}
+		}
 	}
 	defer file.Close()
 	w := bufio.NewWriter(file)
