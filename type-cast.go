@@ -64,6 +64,13 @@ func TpFloat64(v interface{}) (float64, error) {
 	return strconv.ParseFloat(s, 64)
 }
 
+func TpFloat32(v interface{}) (float32, error) {
+	s, err := TpString(v)
+	utee.Chk(err)
+	f64,err:=strconv.ParseFloat(s, 32)
+	return float32(f64),err
+}
+
 var ICast = InterfaceCast{}
 
 type InterfaceCast struct {
