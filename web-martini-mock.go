@@ -29,6 +29,7 @@ func (p *HttpHelperMockBuilder) ParamHelper() ParamHelper {
 		Bool:    wp_func_Bool(m),
 		Int:     wp_func_Int(m),
 		Time:    wp_func_time(m),
+		TimeLoc: wp_func_time_loc(m),
 		String:  wp_func_string(m),
 		IntArr:  wp_func_IntArray(m),
 	}

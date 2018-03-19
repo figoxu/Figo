@@ -17,6 +17,7 @@ type ParamHelper struct {
 	Int64   func(name string) int64
 	Uint64  func(name string) uint64
 	Time    func(name, format string) time.Time
+	TimeLoc func(name, format string, loc *time.Location) time.Time
 	String  func(name string) string
 	IntArr  func(name, separate string) []int
 }
@@ -29,6 +30,7 @@ func Mid_helper_param(c martini.Context, param martini.Params, w http.ResponseWr
 		Int64:   wp_func_Int64(param),
 		Uint64:  wp_func_Uint64(param),
 		Time:    wp_func_time(param),
+		TimeLoc: wp_func_time_loc(param),
 		String:  wp_func_string(param),
 	})
 }
@@ -109,6 +111,15 @@ func wp_func_time(param martini.Params) func(name, format string) time.Time {
 	return func(name, format string) time.Time {
 		log.Println("wp_func_time   ", name)
 		t, err := time.Parse(format, param[name])
+		utee.Chk(err)
+		return t
+	}
+}
+
+func wp_func_time_loc(param martini.Params) func(name, format string, loc *time.Location) time.Time {
+	return func(name, format string, loc *time.Location) time.Time {
+		log.Println("wp_func_time   ", name)
+		t, err := time.ParseInLocation(format, param[name], local)
 		utee.Chk(err)
 		return t
 	}
