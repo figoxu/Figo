@@ -185,7 +185,7 @@ func form_func_IntArray(r *http.Request) func(name, separate string) []int {
 			if v == "" {
 				continue
 			}
-			if iv, err := strconv.ParseInt(v, 10, 32); err != nil {
+			if iv, err := strconv.ParseInt(v, 10, 32); err == nil {
 				ivs = append(ivs, int(iv))
 			}
 		}
