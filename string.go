@@ -151,24 +151,38 @@ func JsonPathParse(data, jsonPath string) interface{} {
 	return v
 }
 
-func FillPrefix(v,fillChar string,resultLen int) string{
-	if len(v)>resultLen || len(fillChar)<=0{
+func FillPrefix(v, fillChar string, resultLen int) string {
+	if len(v) > resultLen || len(fillChar) <= 0 {
 		return v
 	}
-	blank,result:=fillChar[0:1],v
-	for i:=0;i<resultLen-len(v);i++ {
-		result = fmt.Sprint(blank,result)
+	blank, result := fillChar[0:1], v
+	for i := 0; i < resultLen-len(v); i++ {
+		result = fmt.Sprint(blank, result)
 	}
 	return result
 }
 
-func FillSuffix(v,fillChar string,resultLen int) string{
-	if len(v)>resultLen || len(fillChar)<=0{
+func FillSuffix(v, fillChar string, resultLen int) string {
+	if len(v) > resultLen || len(fillChar) <= 0 {
 		return v
 	}
-	blank,result:=fillChar[0:1],v
-	for i:=0;i<resultLen-len(v);i++ {
-		result = fmt.Sprint(result,blank)
+	blank, result := fillChar[0:1], v
+	for i := 0; i < resultLen-len(v); i++ {
+		result = fmt.Sprint(result, blank)
 	}
 	return result
+}
+
+type SwitchStrParam struct {
+	Condition bool
+	Value     string
+}
+
+func SwitchString(defaultVal string, params ... SwitchStrParam) string {
+	for _,param:=range params{
+		if param.Condition {
+			return param.Value
+		}
+	}
+	return defaultVal
 }

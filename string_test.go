@@ -3,6 +3,7 @@ package Figo
 import (
 	"log"
 	"testing"
+	"fmt"
 )
 
 func TestSnakeString(t *testing.T) {
@@ -15,6 +16,11 @@ func TestCamelString(t *testing.T) {
 func TestMd5Shard(t *testing.T) {
 	shardSize := 2
 	log.Println(Md5Shard("helloFooBarWorld", shardSize))
+}
+
+func TestSwitchString(t *testing.T) {
+	fmt.Println(
+		SwitchString("默认值", SwitchStrParam{1 == 2, "hello"}, SwitchStrParam{3 == 4, "world"}, SwitchStrParam{5 > 5, "i am here"}))
 }
 
 func TestJsonPathParse(t *testing.T) {
