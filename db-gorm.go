@@ -25,7 +25,6 @@ func GormDataMap(v interface{}, snakeStrFields ...string)map[string]interface{}{
 	for _,field:=range snakeStrFields {
 		prop := CamelString(field)
 		dataMap[field]=immutable.FieldByName(prop).Interface()
-		log.Println("@field:",field,"@prop:",prop)
 	}
 	return dataMap
 }
