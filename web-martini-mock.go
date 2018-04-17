@@ -25,14 +25,8 @@ func (p *HttpHelperMockBuilder) MockVal(key, val string) *HttpHelperMockBuilder 
 func (p *HttpHelperMockBuilder) ParamHelper() ParamHelper {
 	m := martini.Params(p.dataMock)
 	return ParamHelper{
-		Float64: wp_func_float64(m),
-		Bool:    wp_func_Bool(m),
-		Int:     wp_func_Int(m),
-		Time:    wp_func_time(m),
-		TimeLoc: wp_func_time_loc(m),
-		String:  wp_func_string(m),
-		IntArr:  wp_func_IntArray(m),
-		Uint64:  wp_func_Uint64(m),
+		param:   m,
+		context: make(map[string]interface{}),
 	}
 }
 
@@ -46,11 +40,8 @@ func (p *HttpHelperMockBuilder) FormHelper() FormHelper {
 		PostForm: values,
 	}
 	return FormHelper{
-		Int:     form_func_Int(r),
-		Float32: form_func_Float32(r),
-		String:  form_func_String(r),
-		StrArr:  form_func_StrArray(r),
-		IntArr:  form_func_IntArray(r),
+		r:       r,
+		context: make(map[string]interface{}),
 	}
 }
 
