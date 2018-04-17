@@ -10,7 +10,7 @@ import (
 )
 
 type ParamHelper struct {
-	context map[string]interface{}
+	context map[string]string
 	param   martini.Params
 }
 
@@ -60,15 +60,19 @@ func (p *ParamHelper) IntArr(name, separate string) []int {
 	return r
 }
 
+func (p *ParamHelper) Params()map[string]string{
+	return p.context
+}
+
 func Mid_helper_param(c martini.Context, param martini.Params, w http.ResponseWriter) {
 	c.Map(&ParamHelper{
 		param:   param,
-		context: make(map[string]interface{}),
+		context: make(map[string]string),
 	})
 }
 
 type FormHelper struct {
-	context map[string]interface{}
+	context map[string]string
 	r       *http.Request
 }
 
@@ -106,10 +110,15 @@ func (p *FormHelper) IntArr(name, separate string) []int {
 	return r
 }
 
+func (p *FormHelper) Params()map[string]string{
+	return p.context
+}
+
+
 func Mid_helper_form(c martini.Context, r *http.Request) {
 	c.Map(&FormHelper{
 		r:       r,
-		context: make(map[string]interface{}),
+		context: make(map[string]string),
 	})
 }
 

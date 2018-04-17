@@ -26,7 +26,7 @@ func (p *HttpHelperMockBuilder) ParamHelper() ParamHelper {
 	m := martini.Params(p.dataMock)
 	return ParamHelper{
 		param:   m,
-		context: make(map[string]interface{}),
+		context: make(map[string]string),
 	}
 }
 
@@ -41,7 +41,7 @@ func (p *HttpHelperMockBuilder) FormHelper() FormHelper {
 	}
 	return FormHelper{
 		r:       r,
-		context: make(map[string]interface{}),
+		context: make(map[string]string),
 	}
 }
 
