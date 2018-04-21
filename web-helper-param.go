@@ -103,7 +103,7 @@ func wp_func_Int(param martini.Params, name string, defaultVs ...int) (result in
 
 func wp_func_Int64(param martini.Params, name string) (result int64, pure string) {
 	pure = param[name]
-	v, err := strconv.ParseInt(pure, 10, 32)
+	v, err := strconv.ParseInt(pure, 10, 64)
 	utee.Chk(err)
 	return v, pure
 }
@@ -124,7 +124,7 @@ func wp_func_time(param martini.Params, name, format string) (result time.Time, 
 
 func wp_func_time_loc(param martini.Params, name, format string, loc *time.Location) (result time.Time, pure string) {
 	pure = param[name]
-	t, err := time.ParseInLocation(format, pure, local)
+	t, err := time.ParseInLocation(format, pure, loc)
 	utee.Chk(err)
 	return t, pure
 }

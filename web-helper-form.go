@@ -75,7 +75,7 @@ func form_func_Int(r *http.Request, name string, defaultVs ...int) (result int, 
 func form_func_Int64(r *http.Request, name string) (result int64, pure string) {
 	pure = r.PostFormValue(name)
 	sv := strings.TrimSpace(pure)
-	v, err := strconv.ParseInt(sv, 10, 32)
+	v, err := strconv.ParseInt(sv, 10, 64)
 	utee.Chk(err)
 	return v, pure
 }
