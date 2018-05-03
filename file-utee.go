@@ -21,6 +21,13 @@ func (p *FileUtee) Exist(filename string) bool {
 	return exist
 }
 
+func (p *FileUtee) MkDir(dir string){
+	if !p.Exist(dir){
+		err := os.MkdirAll(dir, 0777)
+		utee.Chk(err)
+	}
+}
+
 func (p *FileUtee) MakeFile(dir, fileName string) (*os.File, error) {
 	var f *os.File
 	var err error
