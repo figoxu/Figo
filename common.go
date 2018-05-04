@@ -9,7 +9,7 @@ import (
 	"github.com/figoxu/color"
 	"github.com/jinzhu/copier"
 	"github.com/quexer/utee"
-	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2"
 	"log"
 	"os"
 	"reflect"
@@ -22,7 +22,7 @@ func Catch(hooks ...func()) {
 	if err := recover(); err != nil {
 		log.Println(string(debug.Stack()))
 		log.Println(err, " (recover)")
-		for _,hook:=range hooks {
+		for _, hook := range hooks {
 			hook()
 		}
 	}
@@ -44,17 +44,18 @@ func Exist(expect interface{}, objs ...interface{}) bool {
 	return false
 }
 
-func RetryExe(business func() error, times int, tips string) {
+func RetryExe(business func() error, times int, tips string) (int, bool) {
 	err := business()
 	retry := 0
 	for err != nil && retry < times {
 		retry++
 		err = business()
 	}
+	success := (err == nil)
 	if retry > 0 && tips != "" {
-		success := (err == nil)
 		log.Println(tips, " Execute With ", retry, " times .  @SuccessFlag:", success)
 	}
+	return retry, success
 }
 
 func ParseUrl(s string) (string, int, error) {
