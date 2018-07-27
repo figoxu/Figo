@@ -29,6 +29,7 @@ func TestNewRedisHash(t *testing.T) {
 	}}...)
 	log.Println(hash.Get("a","b","c","d","e","f"))
 	log.Println(hash.Get("KEY_NEVER_EXIST","Hello","a","b","c","d","e","f"))
+	log.Println(hash.GetAll())
 
 }
 

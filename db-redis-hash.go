@@ -72,3 +72,22 @@ func (p *RedisHash) Get(ks ...string) ([]Skv, error) {
 	}
 	return kvs, nil
 }
+
+func (p *RedisHash) GetAll() ([]Skv, error) {
+	c := p.rp.Get()
+	defer c.Close()
+	kvs := make([]Skv, 0)
+	vs, err := redis.Strings(c.Do("HGETALL", p.masterKey))
+	if err != nil || len(vs)%2 != 0 {
+		return kvs, err
+	}
+	size := len(vs) / 2
+	for i := 0; i < size; i++ {
+		k, v := vs[i*2], vs[i*2+1]
+		kvs = append(kvs, Skv{
+			K: k,
+			V: v,
+		})
+	}
+	return kvs, nil
+}
