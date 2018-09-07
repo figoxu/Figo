@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"net/url"
 )
 
 const (
@@ -41,4 +42,14 @@ func (p *TinyUrl) Handler() martini.Handler {
 			http.Redirect(w, r, originUrl, 301)
 		}
 	}
+}
+
+
+func UrlAppendParam(rawUrl, k, v string) string {
+	reqURI, err := url.ParseRequestURI(rawUrl)
+	utee.Chk(err)
+	vs := reqURI.Query()
+	vs.Set(k, v)
+	reqURI.RawQuery = vs.Encode()
+	return reqURI.String()
 }
