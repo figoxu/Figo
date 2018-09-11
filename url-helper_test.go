@@ -23,8 +23,20 @@ func TestConvert(t *testing.T) {
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-
 func TestUrlAppendParam(t *testing.T) {
 	v := UrlAppendParam("http://figoxu.me/welcome.jsp?auth=true&zoom=99&age=18&male=true", "token", "123456trewq4rfvCDE#")
 	fmt.Print(v)
+}
+
+func TestUrlExistParam(t *testing.T) {
+	exist := UrlExistParam("http://www.baidu.com/index.html?foo=bar&hello=world", "foo")
+	fmt.Println(exist)
+	exist = UrlExistParam("http://www.baidu.com/index.html?foo=bar&hello=world", "somethingelse")
+	fmt.Println(exist)
+
+}
+
+func TestUrlRemoveParam(t *testing.T) {
+	v := UrlRemoveParam("http://www.baidu.com/index.html?foo=bar&hello=world", "foo")
+	fmt.Println(v)
 }

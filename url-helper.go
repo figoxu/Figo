@@ -53,3 +53,19 @@ func UrlAppendParam(rawUrl, k, v string) string {
 	reqURI.RawQuery = vs.Encode()
 	return reqURI.String()
 }
+
+func UrlRemoveParam(rawUrl,k string)string{
+	reqURI, err := url.ParseRequestURI(rawUrl)
+	utee.Chk(err)
+	vs := reqURI.Query()
+	vs.Del(k)
+	reqURI.RawQuery = vs.Encode()
+	return reqURI.String()
+}
+
+func UrlExistParam(rawUrl,k string)bool{
+	reqURI, err := url.ParseRequestURI(rawUrl)
+	utee.Chk(err)
+	vs := reqURI.Query()
+	return vs.Get(k)!=""
+}
