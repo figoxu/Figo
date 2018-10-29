@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"github.com/quexer/utee"
+	"io"
 )
 
 type FileCleanHelper struct {
@@ -26,10 +28,22 @@ func NewFileCleanHelper(ScanDir, BackDir string, BackDurationSec, CleanDurationS
 func (p *FileCleanHelper) Back() {
 	dateLine := time.Now().Add(time.Second * time.Duration(p.BackDurationSec))
 	filepath.Walk(p.ScanDir, func(path string, info os.FileInfo, err error) error {
+		if info.IsDir() {
+			return nil
+		}
 		if dateLine.Unix()-info.ModTime().Unix() > 0 {
-			newPath := NewFilePath(path).UnixPath()
+			outFilePath := NewFilePath(strings.Replace(path,p.ScanDir,p.BackDir,-1))
+			newPath := outFilePath.UnixPath()
+			err:=os.MkdirAll(outFilePath.FolderName(), 0777)
+			utee.Chk(err)
 			newFileName := strings.Replace(newPath, p.ScanDir, p.BackDir, -1)
-			os.Rename(path, newFileName)
+			in,err:=NewFilePath(path).Open()
+			utee.Chk(err)
+			out,err:=NewFilePath(newFileName).Open()
+			utee.Chk(err)
+			_, err = io.Copy(out, in)
+			utee.Chk(err)
+			os.Remove(path)
 		}
 		return nil
 	})
@@ -37,7 +51,7 @@ func (p *FileCleanHelper) Back() {
 
 func (p *FileCleanHelper) Clean() {
 	dateLine := time.Now().Add(time.Second * time.Duration(p.CleanDurationSec))
-	filepath.Walk(p.ScanDir, func(path string, info os.FileInfo, err error) error {
+	filepath.Walk(p.BackDir, func(path string, info os.FileInfo, err error) error {
 		if dateLine.Unix()-info.ModTime().Unix() > 0 {
 			os.Remove(path)
 		}
