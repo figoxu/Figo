@@ -26,6 +26,7 @@ func NewFileCleanHelper(ScanDir, BackDir string, BackDurationSec, CleanDurationS
 }
 
 func (p *FileCleanHelper) Back() {
+	defer Catch()
 	dateLine := time.Now().Add(time.Second * time.Duration(p.BackDurationSec))
 	filepath.Walk(p.ScanDir, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
@@ -50,6 +51,7 @@ func (p *FileCleanHelper) Back() {
 }
 
 func (p *FileCleanHelper) Clean() {
+	defer Catch()
 	dateLine := time.Now().Add(time.Second * time.Duration(p.CleanDurationSec))
 	filepath.Walk(p.BackDir, func(path string, info os.FileInfo, err error) error {
 		if dateLine.Unix()-info.ModTime().Unix() > 0 {
