@@ -55,12 +55,17 @@ func UrlAppendParam(rawUrl, k, v string) string {
 }
 
 func UrlRemoveParam(rawUrl,k string)string{
-	reqURI, err := url.ParseRequestURI(rawUrl)
+	pureUrl,hash := rawUrl,""
+	if idx:=strings.LastIndex(rawUrl,"#");idx!=-1 {
+		pureUrl = rawUrl[0:idx]
+		hash = rawUrl[idx:len(rawUrl)]
+	}
+	reqURI, err := url.ParseRequestURI(pureUrl)
 	utee.Chk(err)
 	vs := reqURI.Query()
 	vs.Del(k)
 	reqURI.RawQuery = vs.Encode()
-	return reqURI.String()
+	return fmt.Sprint(reqURI.String(),hash)
 }
 
 func UrlExistParam(rawUrl,k string)bool{

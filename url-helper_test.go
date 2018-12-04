@@ -39,4 +39,6 @@ func TestUrlExistParam(t *testing.T) {
 func TestUrlRemoveParam(t *testing.T) {
 	v := UrlRemoveParam("http://www.baidu.com/index.html?foo=bar&hello=world", "foo")
 	fmt.Println(v)
+	v = UrlRemoveParam("http://admin.dev.app.startrip.vip/sdzadmin/index.html?basic_pure_token=MzEyOjgxMTE2OWRhLTRhNjEtNGIzMS1iMWQ0LWU0MDZjYzFlYjY2NQ%3D%3D#/campsdz/index", "basic_pure_token")
+	fmt.Println(v)
 }
