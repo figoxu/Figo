@@ -31,6 +31,12 @@ func (p *RedisSortedSet) ZBatchAdd(ssitems ...SSItem) {
 	c.Flush()
 }
 
+func (p *RedisSortedSet) ZRem(name string) {
+	c := p.rp.Get()
+	defer c.Close()
+	c.Do("ZREM", p.key, name)
+}
+
 func (p *RedisSortedSet) ZScore(name string) int64 {
 	c := p.rp.Get()
 	defer c.Close()
