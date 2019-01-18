@@ -2,14 +2,16 @@ package Figo
 
 import (
 	"github.com/garyburd/redigo/redis"
+	"log"
 	"strings"
 	"time"
 )
 
 // 支持'去重'的优先级队列
 type RedisZQueue struct {
-	rp   *redis.Pool
-	name string
+	rp            *redis.Pool
+	name          string
+	emptySleepSec int
 }
 
 var zpopScript = redis.NewScript(1, `
@@ -21,16 +23,18 @@ var zpopScript = redis.NewScript(1, `
     return r
 `)
 
-func NewRedisZQueue(rp *redis.Pool, name string, concurrent int, worker func(string, error)) RedisZQueue {
-	q := RedisZQueue{
-		rp:   rp,
-		name: name,
+func NewRedisZQueue(rp *redis.Pool, name string, concurrent int, worker func(string, error)) *RedisZQueue {
+	q := &RedisZQueue{
+		rp:            rp,
+		name:          name,
+		emptySleepSec: 1,
 	}
 	f := func() {
 		for {
 			v, err := q.Deq()
 			if v == "" {
-				time.Sleep(time.Second)
+				log.Println("@Sleep:",q.emptySleepSec," Sec")
+				time.Sleep(time.Second * time.Duration(q.emptySleepSec))
 			} else {
 				worker(v, err)
 			}
@@ -40,6 +44,10 @@ func NewRedisZQueue(rp *redis.Pool, name string, concurrent int, worker func(str
 		go f()
 	}
 	return q
+}
+
+func (p *RedisZQueue) Cfg(emptySleepSec int) {
+	p.emptySleepSec = emptySleepSec
 }
 
 func (p *RedisZQueue) Enq(v string, score int) error {

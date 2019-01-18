@@ -16,6 +16,7 @@ func TestNewRedisZQueue(t *testing.T) {
 		fmt.Println(v)
 		time.Sleep(time.Millisecond)
 	})
+	rq.Cfg(11)
 	for i := 0; i < 100; i++ {
 		if i == 10 {
 			err := rq.Enq(fmt.Sprint("Hello ", i), math.MaxInt32-1)
