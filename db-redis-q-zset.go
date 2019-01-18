@@ -2,7 +2,6 @@ package Figo
 
 import (
 	"github.com/garyburd/redigo/redis"
-	"log"
 	"strings"
 	"time"
 )
@@ -33,7 +32,6 @@ func NewRedisZQueue(rp *redis.Pool, name string, concurrent int, worker func(str
 		for {
 			v, err := q.Deq()
 			if v == "" {
-				log.Println("@Sleep:",q.emptySleepSec," Sec")
 				time.Sleep(time.Second * time.Duration(q.emptySleepSec))
 			} else {
 				worker(v, err)
