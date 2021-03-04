@@ -3,14 +3,14 @@ package Figo
 import (
 	"expvar"
 	"fmt"
-	"github.com/go-martini/martini"
-	"github.com/quexer/utee"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/go-martini/martini"
 )
 
 func NewMartini(slowMSec, concurrent int, war string) *martini.ClassicMartini {
@@ -34,7 +34,7 @@ type TimeMatrix struct {
 
 func (p *TimeMatrix) Rec(name string) {
 	p.Lock()
-	p.m = append(p.m, &tmEntry{name, utee.Tick()})
+	p.m = append(p.m, &tmEntry{name, Tick()})
 	p.Unlock()
 }
 
@@ -62,12 +62,12 @@ func MidSlowLog(limit int) func(*http.Request, martini.Context) {
 	}
 
 	return func(req *http.Request, c martini.Context) {
-		start := utee.Tick()
+		start := Tick()
 		tm := &TimeMatrix{}
 		tm.Rec("start")
 		c.Map(tm)
 		defer func() {
-			t := utee.Tick() - start
+			t := Tick() - start
 			if t >= int64(limit) {
 				log.Printf("[slow] %3vms %s \n", t, req.RequestURI)
 				if Env("TIME_MATRIX", false, false) != "" {
@@ -126,5 +126,13 @@ func MidConcurrent(concurrent ...int) func(http.ResponseWriter, martini.Context)
 				http.Error(w, "server is busy", 503)
 			}
 		}
+	}
+}
+
+func Tick(t ...time.Time) int64 {
+	if len(t) == 0 {
+		return time.Now().UnixNano() / 1e6
+	} else {
+		return t[0].UnixNano() / 1e6
 	}
 }
