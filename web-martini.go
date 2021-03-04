@@ -70,7 +70,7 @@ func MidSlowLog(limit int) func(*http.Request, martini.Context) {
 			t := utee.Tick() - start
 			if t >= int64(limit) {
 				log.Printf("[slow] %3vms %s \n", t, req.RequestURI)
-				if utee.Env("TIME_MATRIX", false, false) != "" {
+				if Env("TIME_MATRIX", false, false) != "" {
 					tm.Print()
 				}
 			}

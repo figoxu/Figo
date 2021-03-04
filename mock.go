@@ -1,6 +1,7 @@
 package Figo
 
 import (
+	"encoding/json"
 	"github.com/quexer/utee"
 	"io"
 	"net/http"
@@ -13,6 +14,21 @@ func MockRequest(method, url string, body io.Reader) *http.Request {
 	return req
 }
 
-func MockUteeWeb() utee.Web {
-	return utee.Web{W: httptest.NewRecorder()}
+func MockUteeWeb() Web {
+	return Web{W: httptest.NewRecorder()}
+}
+
+type Web struct {
+	W http.ResponseWriter
+}
+
+func (p *Web) Json(code int, data interface{}) (int, string) {
+	b, err := json.Marshal(data)
+	utee.Chk(err)
+	p.W.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	return code, string(b)
+}
+func (p *Web) Txt(code int, txt string) (int, string) {
+	p.W.Header().Set("Content-Type", "html/text; charset=UTF-8")
+	return code, txt
 }
