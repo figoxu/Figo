@@ -21,6 +21,7 @@ require (
 	github.com/gogap/stack v0.0.0-20150131034635-fef68dddd4f8 // indirect
 	github.com/jinzhu/copier v0.2.5
 	github.com/jinzhu/gorm v1.9.16
+	github.com/jmoiron/jsonq v0.0.0-20150511023944-e874b168d07e // indirect
 	github.com/kellydunn/golang-geo v0.7.0
 	github.com/kylelemons/go-gypsy v1.0.0 // indirect
 	github.com/mattn/go-colorable v0.1.8 // indirect
